@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DK Contest Analyzer</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,400;0,500&family=Barlow+Condensed:wght@400;600;700;800;900&display=swap');
+:root{
+  --bg:#07090c;--sur:#0d1117;--card:#111820;--bdr:#1a2332;--bdr2:#243040;
+  --acc:#00e5ff;--gold:#ffd700;--grn:#22d87a;--red:#f04444;--amb:#f59e0b;--pur:#a78bfa;
+  --txt:#d8e3ef;--mut:#4a5c70;--dim:#151f2b;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--txt);font-family:'DM Mono',monospace;font-size:13px;min-height:100vh;}
+a{color:var(--acc);text-decoration:none;}
+code{background:var(--dim);padding:1px 5px;border-radius:3px;font-size:11px;}
+
+/* ── UPLOAD SCREEN ── */
+#up{max-width:860px;margin:0 auto;padding:52px 24px;}
+.up-logo{font-family:'Barlow Condensed',sans-serif;font-size:32px;font-weight:900;letter-spacing:4px;text-transform:uppercase;color:var(--acc);margin-bottom:4px;}
+.up-sub{font-size:11px;color:var(--mut);margin-bottom:36px;letter-spacing:.5px;}
+.dz{border:2px dashed var(--bdr2);border-radius:12px;padding:52px 40px;text-align:center;cursor:pointer;transition:.2s;margin-bottom:20px;}
+.dz:hover,.dz.over{border-color:var(--acc);background:rgba(0,229,255,.025);}
+.dz h2{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:700;color:var(--acc);margin-bottom:10px;letter-spacing:1px;}
+.dz p{color:var(--mut);font-size:12px;line-height:2.2;margin-bottom:20px;}
+.dz input[type=file]{display:none;}
+
+.sec{background:var(--sur);border:1px solid var(--bdr);border-radius:8px;padding:18px;margin-bottom:16px;}
+.sec h3{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--mut);margin-bottom:12px;}
+.sec p{font-size:11px;color:var(--mut);margin-top:8px;line-height:1.8;}
+.row{display:grid;gap:8px;align-items:center;margin-bottom:8px;}
+label{font-size:11px;color:var(--mut);}
+input[type=text]{background:var(--bg);border:1px solid var(--bdr);color:var(--txt);padding:7px 11px;font-family:'DM Mono',monospace;font-size:12px;border-radius:5px;width:100%;transition:.15s;}
+input[type=text]:focus{outline:none;border-color:var(--acc);background:#0a0f18;}
+
+.btn{background:var(--acc);color:#000;border:none;padding:9px 22px;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:800;letter-spacing:1px;text-transform:uppercase;cursor:pointer;border-radius:5px;transition:.15s;}
+.btn:hover{opacity:.85;}
+.btn-sm{font-size:12px;padding:5px 13px;}
+.btn-ghost{background:transparent;border:1px solid var(--bdr2);color:var(--mut);font-family:'DM Mono',monospace;font-size:12px;}
+.btn-ghost:hover{border-color:var(--txt);color:var(--txt);}
+.btn-gold{background:rgba(255,215,0,.1);border:1px solid rgba(255,215,0,.35);color:var(--gold);font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:800;letter-spacing:1px;text-transform:uppercase;}
+.btn-gold:hover{background:rgba(255,215,0,.18);}
+.btn-grn{background:rgba(34,216,122,.12);border:1px solid rgba(34,216,122,.35);color:var(--grn);font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:800;letter-spacing:1px;text-transform:uppercase;}
+.btn-grn:hover{background:rgba(34,216,122,.2);}
+
+/* ── APP ── */
+#app{display:none;}
+.ah{border-bottom:1px solid var(--bdr);padding:11px 22px;background:var(--sur);display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+.at{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:900;letter-spacing:2px;text-transform:uppercase;color:var(--acc);}
+.badge{background:var(--bdr);padding:3px 9px;border-radius:3px;font-size:11px;color:var(--mut);}
+.fp{font-size:11px;padding:3px 9px;border-radius:3px;font-weight:600;letter-spacing:.5px;}
+.fp-std{background:rgba(34,216,122,.1);color:var(--grn);border:1px solid rgba(34,216,122,.25);}
+.fp-sd{background:rgba(255,215,0,.1);color:var(--gold);border:1px solid rgba(255,215,0,.25);}
+.ah-btns{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap;}
+
+/* share info bar */
+.info-bar{background:var(--dim);border-bottom:1px solid var(--bdr);padding:9px 22px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;}
+.info-bar span{font-size:11px;color:var(--mut);line-height:1.6;}
+.info-bar strong{color:var(--txt);}
+
+/* stats strip */
+.sb{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:1px;background:var(--bdr);border-bottom:1px solid var(--bdr);}
+.sc{background:var(--sur);padding:10px 16px;}
+.sc .sl{font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--mut);margin-bottom:3px;}
+.sc .sv{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:700;color:var(--acc);}
+.sc .ss{font-size:11px;color:var(--mut);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+
+/* user search */
+.usr-bar{padding:10px 16px;background:var(--sur);border-bottom:1px solid var(--bdr);display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
+.usr-bar input{width:240px;}
+.usr-bar .meta{font-size:11px;color:var(--mut);}
+#usr-hits{padding:8px 16px 0;display:none;flex-wrap:wrap;gap:6px;}
+.usr-chip{font-size:11px;padding:4px 10px;border-radius:4px;background:var(--card);border:1px solid var(--bdr2);color:var(--txt);cursor:pointer;}
+.usr-chip:hover{border-color:var(--acc);color:var(--acc);}
+.usr-chip.sel{background:rgba(0,229,255,.1);border-color:var(--acc);color:var(--acc);}
+
+/* tabs */
+.tb{display:flex;border-bottom:1px solid var(--bdr);background:var(--sur);overflow-x:auto;}
+.tab{padding:10px 16px;cursor:pointer;font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--mut);border-bottom:2px solid transparent;white-space:nowrap;flex-shrink:0;transition:.15s;}
+.tab:hover{color:var(--txt);}
+.tab.active{color:var(--acc);border-bottom-color:var(--acc);}
+.pane{display:none;}
+.pane.active{display:block;}
+
+/* ownership toolbar */
+.ot{padding:8px 16px;background:var(--sur);border-bottom:1px solid var(--bdr);display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
+.ot input{width:200px;}
+.ot .meta{font-size:11px;color:var(--mut);margin-left:auto;}
+
+/* table */
+table{width:100%;border-collapse:collapse;}
+th{padding:7px 13px;text-align:left;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--mut);border-bottom:1px solid var(--bdr);background:var(--bg);cursor:pointer;white-space:nowrap;user-select:none;}
+th:hover{color:var(--acc);}
+th.r{text-align:right;}
+td{padding:7px 13px;border-bottom:1px solid var(--dim);font-size:12px;}
+td.r{text-align:right;font-variant-numeric:tabular-nums;}
+tr:hover td{background:rgba(255,255,255,.02);}
+tr.mine td{background:rgba(0,229,255,.04);}
+tr.mine td:first-child{border-left:2px solid var(--acc);}
+.ovr{overflow-x:auto;}
+
+/* bar + pct */
+.bw{display:flex;align-items:center;gap:6px;justify-content:flex-end;}
+.bt{width:60px;height:4px;background:var(--bdr);border-radius:2px;overflow:hidden;flex-shrink:0;}
+.bf{height:100%;border-radius:2px;}
+.pct{font-size:12px;font-weight:500;min-width:46px;text-align:right;}
+.hi{color:var(--red);}.md{color:var(--amb);}.lo{color:var(--grn);}.zr{color:var(--mut);}
+.dot{display:inline-block;width:5px;height:5px;border-radius:50%;background:var(--acc);margin-right:5px;vertical-align:middle;}
+
+/* lineup cards */
+.luc{margin:10px 14px;background:var(--card);border:1px solid var(--bdr);border-radius:6px;overflow:hidden;}
+.lch{padding:8px 13px;background:var(--sur);border-bottom:1px solid var(--bdr);display:flex;justify-content:space-between;align-items:center;}
+.lct{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:1px;text-transform:uppercase;}
+.lcm{font-size:11px;color:var(--mut);}
+.lp{display:grid;align-items:center;padding:7px 13px;border-bottom:1px solid var(--dim);gap:10px;}
+.lp:last-child{border-bottom:none;}
+.sc-cpt{font-size:10px;padding:2px 6px;border-radius:3px;background:rgba(0,229,255,.15);color:var(--acc);font-weight:600;}
+.sc-flx{font-size:10px;padding:2px 6px;border-radius:3px;background:rgba(255,255,255,.04);color:var(--mut);}
+
+/* winner */
+.wc{margin:14px;padding:16px;background:linear-gradient(135deg,rgba(255,215,0,.07),rgba(255,215,0,.02));border:1px solid rgba(255,215,0,.2);border-radius:8px;}
+.wps{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;}
+.wp{font-size:11px;padding:3px 9px;border-radius:3px;}
+.wpc{background:rgba(0,229,255,.15);color:var(--acc);border:1px solid rgba(0,229,255,.3);}
+.wpf{background:rgba(255,215,0,.08);color:var(--gold);}
+.wpm{outline:1px solid var(--gold);}
+.rc{display:inline-block;background:var(--bdr);padding:2px 7px;border-radius:3px;font-size:11px;color:var(--mut);}
+.rc.top{background:rgba(255,215,0,.12);color:var(--gold);}
+.empty{padding:40px;text-align:center;color:var(--mut);}
+</style>
+</head>
+<body>
+
+<!-- ════════════════════════════════ UPLOAD ════════════════════════════════ -->
+<div id="up">
+  <div class="up-logo">DK Contest Analyzer</div>
+  <div class="up-sub">Standard GPP · Captain Mode Showdown · Username lookup · Shareable export</div>
+
+  <div class="dz" id="dz">
+    <h2>Drop Contest CSV</h2>
+    <p>
+      DraftKings → Contest → <b style="color:var(--txt)">Export</b> button → save CSV<br>
+      <b style="color:var(--txt)">Standard GPP:</b> &nbsp;<code>G Player G Player ...</code><br>
+      <b style="color:var(--txt)">Showdown CPT:</b> &nbsp;<code>CPT Player FLEX Player ...</code><br>
+      Format auto-detected on load.
+    </p>
+    <label class="btn" for="fi">Choose File</label>
+    <input type="file" id="fi" accept=".csv">
+  </div>
+
+  <div class="sec">
+    <h3>DraftKings Username (optional)</h3>
+    <div class="row" style="grid-template-columns:1fr">
+      <input type="text" id="up-user" placeholder="Enter your DK username — finds all your entries automatically after upload">
+    </div>
+    <p>Searches the contest data for entries matching your username. Case-insensitive partial match. You can also search any username after loading.</p>
+  </div>
+
+  <div class="sec">
+    <h3>Manual Lineups (optional)</h3>
+    <div id="lu-rows">
+      <div class="row" style="grid-template-columns:80px 1fr 34px">
+        <label>LINEUP 1</label>
+        <input type="text" class="lu-inp" placeholder='Showdown: "CPT Scottie Scheffler, FLEX Jason Day, FLEX Xander Schauffele, ..."'>
+        <button class="btn btn-ghost btn-sm" onclick="this.closest('.row').remove()">✕</button>
+      </div>
+    </div>
+    <button class="btn btn-ghost btn-sm" style="margin-top:8px" onclick="addRow()">+ Add Lineup</button>
+    <p>Standard: comma-separated names. Showdown: prefix each with <code>CPT</code> or <code>FLEX</code>.</p>
+  </div>
+</div>
+
+<!-- ════════════════════════════════ APP ════════════════════════════════ -->
+<div id="app">
+  <div class="ah">
+    <span class="at">DK Contest Analyzer</span>
+    <span class="badge" id="h-n">—</span>
+    <span class="fp" id="h-fmt">—</span>
+    <div class="ah-btns">
+      <button class="btn btn-grn btn-sm" onclick="exportShareable()">⬇ Export Shareable File</button>
+      <button class="btn btn-ghost btn-sm" onclick="resetApp()">← New Contest</button>
+    </div>
+  </div>
+
+  <div class="info-bar">
+    <span>📤 <strong>Sharing:</strong> Click "Export Shareable File" — download an HTML file with the contest data baked in. Share it via Slack / Drive / email. Anyone opens it locally — no CSV needed.</span>
+    <span>🌐 <strong>Permanent URL:</strong> Drag this tool file to <a href="https://app.netlify.com/drop" target="_blank">netlify.com/drop</a> for a free shareable URL in ~10 seconds. No account required.</span>
+  </div>
+
+  <div class="sb" id="sb"></div>
+
+  <!-- User search -->
+  <div class="usr-bar">
+    <input type="text" id="usr-q" placeholder="Search DK username to load their lineups…" oninput="liveUserSearch(this.value)">
+    <button class="btn btn-ghost btn-sm" onclick="applyUser(document.getElementById('usr-q').value)">Load Lineups</button>
+    <span class="meta" id="usr-meta"></span>
+  </div>
+  <div id="usr-hits" style="padding:8px 16px 8px;display:none;flex-wrap:wrap;gap:6px;border-bottom:1px solid var(--bdr);background:var(--sur)"></div>
+
+  <div class="tb" id="tb"></div>
+  <div id="panes"></div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════════════════
+const S={
+  entries:[],isSD:false,
+  cptOwn:{},flexOwn:{},comboOwn:{},
+  fpts:{},myLineups:[],
+  contestName:'',rawCSV:'',
+};
+
+// ══════════════════════════════════════════════════════
+// CSV PARSING
+// ══════════════════════════════════════════════════════
+function parseCSV(raw){
+  const lines=raw.trim().split('\n');
+  const hdr=lines[0].split(',').map(h=>h.trim().replace(/^\uFEFF/,''));
+  return lines.slice(1).map(l=>{
+    const c=l.split(',');const r={};
+    hdr.forEach((h,i)=>r[h]=(c[i]||'').trim());return r;
+  });
+}
+
+function isShowdown(rows){
+  const s=(rows.find(r=>r['Lineup']?.trim())||{})['Lineup']||'';
+  return /\bCPT\b|\bFLEX\b/.test(s);
+}
+
+function parseSd(s){
+  s=s.trim();
+  const parts=s.split(/\s+(?=CPT |FLEX )/);
+  let cpt=null;const flex=[];
+  parts.forEach(p=>{
+    const m=p.match(/^(CPT|FLEX)\s+(.+)$/);
+    if(!m)return;
+    if(m[1]==='CPT')cpt=m[2].trim();else flex.push(m[2].trim());
+  });
+  return{cpt,flex};
+}
+
+function parseStd(s){
+  s=s.trim();
+  if(/^G /.test(s))return s.split(' G ').map(p=>p.replace(/^G /,'').trim()).filter(Boolean);
+  return s.split(',').map(p=>p.trim()).filter(Boolean);
+}
+
+function process(raw){
+  S.rawCSV=raw;
+  const rows=parseCSV(raw);
+  S.isSD=isShowdown(rows);
+
+  // Dedupe entries
+  const map=new Map();
+  rows.forEach(r=>{
+    const id=r['EntryId'];
+    if(id&&!map.has(id))map.set(id,{
+      id,rank:parseInt(r['Rank'])||9999,
+      name:r['EntryName']||'',
+      user:(r['EntryName']||'').split('(')[0].trim().toLowerCase(),
+      pts:parseFloat(r['Points'])||0,
+      lu:r['Lineup']||''
+    });
+  });
+  S.entries=[...map.values()];
+  const N=S.entries.length;
+
+  const cC={},fC={},sC={};
+  S.entries.forEach(e=>{
+    if(S.isSD){
+      const{cpt,flex}=parseSd(e.lu);
+      if(cpt)cC[cpt]=(cC[cpt]||0)+1;
+      flex.forEach(p=>{fC[p]=(fC[p]||0)+1;});
+    }else{
+      parseStd(e.lu).forEach(p=>{sC[p]=(sC[p]||0)+1;});
+    }
+  });
+
+  if(S.isSD){
+    S.cptOwn={};S.flexOwn={};S.comboOwn={};
+    Object.entries(cC).forEach(([p,c])=>S.cptOwn[p]=+(c/N*100).toFixed(2));
+    Object.entries(fC).forEach(([p,c])=>S.flexOwn[p]=+(c/N*100).toFixed(2));
+    const all=new Set([...Object.keys(cC),...Object.keys(fC)]);
+    all.forEach(p=>{S.comboOwn[p]=+((( S.cptOwn[p]||0)+(S.flexOwn[p]||0)).toFixed(2));});
+  }else{
+    S.comboOwn={};
+    Object.entries(sC).forEach(([p,c])=>S.comboOwn[p]=+(c/N*100).toFixed(2));
+    S.cptOwn={};S.flexOwn={};
+  }
+
+  // FPTS
+  rows.forEach(r=>{
+    const p=(r['Player']||'').trim();const f=parseFloat(r['FPTS']);
+    if(p&&!isNaN(f))S.fpts[p]=f;
+  });
+
+  // Contest name from filename or first entry
+  S.contestName='DK Contest';
+}
+
+function parseMyLineups(){
+  S.myLineups=[];
+  document.querySelectorAll('.lu-inp').forEach((inp,i)=>{
+    const v=inp.value.trim();if(!v)return;
+    if(S.isSD){
+      const parts=v.split(',').map(s=>s.trim()).filter(Boolean);
+      let cpt=null;const flex=[];
+      parts.forEach(p=>{
+        const m=p.match(/^(CPT|FLEX)\s+(.+)$/i);
+        if(m){if(m[1].toUpperCase()==='CPT')cpt=m[2].trim();else flex.push(m[2].trim());}
+        else if(!cpt)cpt=p;else flex.push(p);
+      });
+      S.myLineups.push({label:`Lineup ${i+1}`,cpt,flex,sd:true});
+    }else{
+      const players=v.split(',').map(p=>p.trim()).filter(Boolean);
+      S.myLineups.push({label:`Lineup ${i+1}`,players,sd:false});
+    }
+  });
+}
+
+// ══════════════════════════════════════════════════════
+// USER SEARCH
+// ══════════════════════════════════════════════════════
+function liveUserSearch(q){
+  q=q.trim().toLowerCase();
+  const hits=document.getElementById('usr-hits');
+  if(!q||q.length<2){hits.style.display='none';document.getElementById('usr-meta').textContent='';return;}
+  const users=[...new Set(S.entries.map(e=>e.user))].filter(u=>u.includes(q)).slice(0,12);
+  if(!users.length){hits.style.display='none';document.getElementById('usr-meta').textContent='No match';return;}
+  hits.style.display='flex';
+  hits.innerHTML=users.map(u=>{
+    const n=S.entries.filter(e=>e.user===u).length;
+    return `<span class="usr-chip" onclick="applyUser('${u}')">${S.entries.find(e=>e.user===u)?.name.split('(')[0].trim()||u} <span style="color:var(--mut)">(${n})</span></span>`;
+  }).join('');
+}
+
+function applyUser(q){
+  q=q.trim().toLowerCase();
+  if(!q)return;
+  const matched=S.entries.filter(e=>e.user.includes(q));
+  document.getElementById('usr-meta').textContent=`${matched.length} entries found for "${q}"`;
+  document.getElementById('usr-hits').style.display='none';
+
+  // Build lineup objects
+  const userLus=matched.sort((a,b)=>a.rank-b.rank).map((e,i)=>{
+    if(S.isSD){const{cpt,flex}=parseSd(e.lu);return{label:`${e.name} · #${e.rank} · ${e.pts.toFixed(1)}pts`,cpt,flex,sd:true};}
+    else{return{label:`${e.name} · #${e.rank} · ${e.pts.toFixed(1)}pts`,players:parseStd(e.lu),sd:false};}
+  });
+
+  // Merge with any manual lineups (keep manual, prepend user-found)
+  const manual=S.myLineups.filter(l=>!l._fromUser);
+  S.myLineups=[...userLus.map(l=>({...l,_fromUser:true})),...manual];
+  renderMyLu();
+  showPane('mylu');
+}
+
+// ══════════════════════════════════════════════════════
+// RENDER
+// ══════════════════════════════════════════════════════
+function renderApp(){
+  document.getElementById('h-n').textContent=`${S.entries.length.toLocaleString()} ENTRIES`;
+  const fp=document.getElementById('h-fmt');
+  fp.textContent=S.isSD?'CAPTAIN MODE SHOWDOWN':'STANDARD GPP';
+  fp.className='fp '+(S.isSD?'fp-sd':'fp-std');
+
+  // Auto-apply username from upload screen
+  const upUser=document.getElementById('up-user').value.trim().toLowerCase();
+  if(upUser)applyUser(upUser);
+
+  renderStats();
+  buildTabs();
+  renderOwn('combo',S.comboOwn,S.isSD?'Total Exposure (CPT+FLEX)':'Ownership %',false,false);
+  if(S.isSD){
+    renderOwn('cpt',S.cptOwn,'CPT % (sums to ~100%)',true,true);
+    renderOwn('flex',S.flexOwn,'FLEX % (sums to ~500%)',true,false);
+  }
+  renderMyLu();
+  renderWinner();
+  renderTop20();
+}
+
+function renderStats(){
+  const N=S.entries.length;
+  const w=[...S.entries].sort((a,b)=>a.rank-b.rank)[0];
+  const nP=Object.keys(S.comboOwn).length;
+  const chk=Object.values(S.isSD?S.cptOwn:S.comboOwn).filter(v=>v>=20).length;
+  document.getElementById('sb').innerHTML=`
+    <div class="sc"><div class="sl">Entries</div><div class="sv">${N.toLocaleString()}</div></div>
+    <div class="sc"><div class="sl">Winner</div><div class="sv" style="color:var(--gold)">${w?.pts.toFixed(2)||'—'}</div><div class="ss">${(w?.name||'').split('(')[0].trim()}</div></div>
+    <div class="sc"><div class="sl">Pool size</div><div class="sv">${nP}</div></div>
+    <div class="sc"><div class="sl">${S.isSD?'CPT >20%':'Players >20%'}</div><div class="sv" style="color:var(--red)">${chk}</div></div>
+    <div class="sc"><div class="sl">My Lineups</div><div class="sv">${S.myLineups.length}</div></div>`;
+}
+
+function buildTabs(){
+  const defs=S.isSD
+    ?[['combo','Total Exposure'],['cpt','CPT %'],['flex','FLEX %'],['mylu','My Lineups'],['winner','Winner'],['top20','Top 20']]
+    :[['combo','Ownership'],['mylu','My Lineups'],['winner','Winner'],['top20','Top 20']];
+  document.getElementById('tb').innerHTML=defs.map((d,i)=>
+    `<div class="tab${i===0?' active':''}" onclick="showPane('${d[0]}')">${d[1]}</div>`
+  ).join('');
+  document.getElementById('panes').innerHTML=defs.map((d,i)=>
+    `<div class="pane${i===0?' active':''}" id="pane-${d[0]}"></div>`
+  ).join('');
+}
+
+function showPane(id){
+  document.querySelectorAll('.tab').forEach(t=>{
+    t.classList.toggle('active',(t.getAttribute('onclick')||'').includes(`'${id}'`));
+  });
+  document.querySelectorAll('.pane').forEach(p=>p.classList.toggle('active',p.id===`pane-${id}`));
+}
+
+// ── OWNERSHIP TABLE ──
+function pctCls(v,isCPT){
+  const hi=isCPT?15:25,md=isCPT?7:12;
+  return v>=hi?'hi':v>=md?'md':v>=1?'lo':'zr';
+}
+function barC(v){return v>=25?'var(--red)':v>=12?'var(--amb)':'var(--grn)';}
+
+function renderOwn(id,obj,label,isSD,isCPT){
+  const pane=document.getElementById('pane-'+id);
+  if(!pane)return;
+  const mySet=mySet_();
+  const N=S.entries.length;
+  const maxV=Math.max(1,...Object.values(obj));
+  const rows=Object.entries(obj).filter(([p])=>p)
+    .sort((a,b)=>b[1]-a[1]).map(([p,v],i)=>({p,v,rank:i+1,fpts:S.fpts[p]??null,mine:mySet.has(p)}));
+  const sum=rows.reduce((s,r)=>s+r.v,0).toFixed(1);
+
+  pane.innerHTML=`
+  <div class="ot">
+    <input type="text" placeholder="Search player…" oninput="filterTbl(this,'tb-${id}')">
+    <span class="meta">${label} &nbsp;·&nbsp; Σ=${sum}%</span>
+  </div>
+  <div class="ovr"><table>
+    <thead><tr><th onclick="sortOwn('${id}','rank')">Rank</th><th onclick="sortOwn('${id}','p')">Player</th>
+      <th class="r" onclick="sortOwn('${id}','v')">Ownership</th>
+      <th class="r" onclick="sortOwn('${id}','fpts')">FPTS</th>
+      <th class="r">Est. Entries</th></tr></thead>
+    <tbody id="tb-${id}">${rows.map(r=>`
+      <tr class="${r.mine?'mine':''}">
+        <td style="color:var(--mut)">${r.rank}</td>
+        <td>${r.mine?'<span class="dot"></span>':''}${r.p}</td>
+        <td class="r"><div class="bw">
+          <div class="bt"><div class="bf" style="width:${(r.v/maxV*100).toFixed(0)}%;background:${barC(r.v)}"></div></div>
+          <span class="pct ${pctCls(r.v,isCPT)}">${r.v.toFixed(2)}%</span>
+        </div></td>
+        <td class="r" style="color:${r.fpts===null?'var(--mut)':r.fpts>=12?'var(--gold)':r.fpts>=6?'var(--grn)':'var(--txt)'}">${r.fpts===null?'—':r.fpts.toFixed(1)}</td>
+        <td class="r" style="color:var(--mut)">${Math.round(r.v/100*N).toLocaleString()}</td>
+      </tr>`).join('')}
+    </tbody>
+  </table></div>`;
+}
+
+function filterTbl(inp,tbId){
+  const q=inp.value.toLowerCase();
+  document.querySelectorAll(`#${tbId} tr`).forEach(tr=>{
+    const nm=tr.querySelectorAll('td')[1]?.textContent?.toLowerCase()||'';
+    tr.style.display=nm.includes(q)?'':'none';
+  });
+}
+
+let _sortState={};
+function sortOwn(id,col){
+  const tb=document.getElementById('tb-'+id);if(!tb)return;
+  const k=`${id}:${col}`;const dir=(_sortState[k]||1)*-1;_sortState[k]=dir;
+  const rows=[...tb.querySelectorAll('tr')].sort((a,b)=>{
+    const ci={'rank':0,'p':1,'v':2,'fpts':3}[col]||0;
+    const av=a.querySelectorAll('td')[ci]?.textContent?.trim()||'';
+    const bv=b.querySelectorAll('td')[ci]?.textContent?.trim()||'';
+    const an=parseFloat(av),bn=parseFloat(bv);
+    return isNaN(an)?av.localeCompare(bv)*dir:(an-bn)*dir;
+  });
+  rows.forEach(r=>tb.append(r));
+}
+
+// ── MY LINEUPS ──
+function mySet_(){
+  return new Set(S.myLineups.flatMap(l=>l.sd?[l.cpt,...(l.flex||[])]:(l.players||[])).filter(Boolean));
+}
+
+function renderMyLu(){
+  const pane=document.getElementById('pane-mylu');if(!pane)return;
+  if(!S.myLineups.length){pane.innerHTML='<div class="empty">No lineups loaded. Search a username above or enter lineups on the upload screen.</div>';return;}
+  pane.innerHTML='';
+  S.myLineups.forEach(lu=>{
+    const card=document.createElement('div');card.className='luc';
+    if(lu.sd){
+      const all=[lu.cpt,...(lu.flex||[])].filter(Boolean);
+      const avgO=((S.cptOwn[lu.cpt]||0)+(lu.flex||[]).reduce((s,p)=>s+(S.flexOwn[p]||0),0))/all.length;
+      const pts=all.reduce((s,p)=>s+(S.fpts[p]||0),0);
+      card.innerHTML=`<div class="lch"><span class="lct">${lu.label}</span><span class="lcm">Avg own: ${avgO.toFixed(1)}% &nbsp;·&nbsp; FPTS: ${pts.toFixed(1)}</span></div>
+        <div class="lp" style="grid-template-columns:50px 1fr 80px 70px;background:rgba(0,229,255,.04)">
+          <span class="sc-cpt">CPT</span><span style="color:var(--acc);font-weight:500">${lu.cpt||'—'}</span>
+          <span style="text-align:right"><span class="pct ${pctCls(S.cptOwn[lu.cpt]||0,true)}">${(S.cptOwn[lu.cpt]||0).toFixed(1)}%</span></span>
+          <span style="text-align:right;color:var(--mut);font-size:11px">${(S.fpts[lu.cpt]||0).toFixed(1)} pts</span>
+        </div>
+        ${(lu.flex||[]).map(p=>`<div class="lp" style="grid-template-columns:50px 1fr 80px 70px">
+          <span class="sc-flx">FLEX</span><span>${p}</span>
+          <span style="text-align:right"><span class="pct ${pctCls(S.flexOwn[p]||0,false)}">${(S.flexOwn[p]||0).toFixed(1)}%</span></span>
+          <span style="text-align:right;color:var(--mut);font-size:11px">${(S.fpts[p]||0).toFixed(1)} pts</span>
+        </div>`).join('')}`;
+    }else{
+      const ps=lu.players||[];
+      const avgO=ps.reduce((s,p)=>s+(S.comboOwn[p]||0),0)/ps.length;
+      const pts=ps.reduce((s,p)=>s+(S.fpts[p]||0),0);
+      card.innerHTML=`<div class="lch"><span class="lct">${lu.label}</span><span class="lcm">Avg own: ${avgO.toFixed(1)}% &nbsp;·&nbsp; FPTS: ${pts.toFixed(1)}</span></div>
+        ${ps.map(p=>`<div class="lp" style="grid-template-columns:1fr 80px 70px">
+          <span>${p}</span>
+          <span style="text-align:right"><span class="pct ${pctCls(S.comboOwn[p]||0,false)}">${(S.comboOwn[p]||0).toFixed(1)}%</span></span>
+          <span style="text-align:right;color:var(--mut);font-size:11px">${(S.fpts[p]||0).toFixed(1)} pts</span>
+        </div>`).join('')}`;
+    }
+    pane.append(card);
+  });
+}
+
+// ── WINNER ──
+function renderWinner(){
+  const pane=document.getElementById('pane-winner');if(!pane)return;
+  const sorted=[...S.entries].sort((a,b)=>a.rank-b.rank);
+  const w=sorted[0];if(!w){pane.innerHTML='<div class="empty">No data</div>';return;}
+  const mySet=mySet_();
+  let chips='';let wAll=[];
+  if(S.isSD){
+    const{cpt,flex}=parseSd(w.lu);
+    wAll=[cpt,...flex].filter(Boolean);
+    if(cpt)chips+=`<span class="wp wpc${mySet.has(cpt)?' wpm':''}">CPT: ${cpt} <span style="opacity:.6;font-size:10px">${(S.cptOwn[cpt]||0).toFixed(1)}%</span></span>`;
+    flex.forEach(p=>{chips+=`<span class="wp wpf${mySet.has(p)?' wpm':''}">FLEX: ${p} <span style="opacity:.6;font-size:10px">${(S.flexOwn[p]||0).toFixed(1)}%</span></span>`;});
+  }else{
+    wAll=parseStd(w.lu);
+    wAll.forEach(p=>{chips+=`<span class="wp wpf${mySet.has(p)?' wpm':''}">${p} <span style="opacity:.6;font-size:10px">${(S.comboOwn[p]||0).toFixed(1)}%</span></span>`;});
+  }
+  const shared=wAll.filter(p=>mySet.has(p));
+  pane.innerHTML=`<div class="wc">
+    <div style="font-size:10px;letter-spacing:2px;color:var(--gold);margin-bottom:6px">🏆 WINNER</div>
+    <div style="font-family:'Barlow Condensed',sans-serif;font-size:24px;font-weight:700;margin-bottom:4px">${w.name}</div>
+    <div style="color:var(--gold);font-size:14px;margin-bottom:10px">${w.pts.toFixed(2)} pts</div>
+    <div class="wps">${chips}</div>
+    <div style="margin-top:10px;font-size:11px;color:var(--mut)">${shared.length?`Shared with your entries: <span style="color:var(--gold)">${shared.join(', ')}</span>`:'No overlap with your lineups'}</div>
+  </div>
+  <div class="ovr" style="padding:0 14px 14px"><table>
+    <thead><tr><th>Rank</th><th>Entry</th><th>Pts</th><th>Lineup</th></tr></thead>
+    <tbody>${sorted.slice(0,10).map(e=>{
+      let str;
+      if(S.isSD){const{cpt,flex}=parseSd(e.lu);str=`<span style="color:var(--acc)">[CPT] ${cpt||'?'}</span> · `+(flex||[]).map(p=>`${p} <span style="color:var(--mut);font-size:10px">${(S.flexOwn[p]||0).toFixed(1)}%</span>`).join(' · ');}
+      else{str=parseStd(e.lu).map(p=>`${p} <span style="color:var(--mut);font-size:10px">${(S.comboOwn[p]||0).toFixed(1)}%</span>`).join(' · ');}
+      return `<tr><td><span class="rc${e.rank<=3?' top':''}">#${e.rank}</span></td>
+        <td style="color:var(--mut);font-size:11px">${e.name}</td>
+        <td style="color:var(--gold)">${e.pts.toFixed(2)}</td>
+        <td style="font-size:11px;line-height:2;color:var(--mut)">${str}</td></tr>`;
+    }).join('')}</tbody>
+  </table></div>`;
+}
+
+// ── TOP 20 ──
+function renderTop20(){
+  const pane=document.getElementById('pane-top20');if(!pane)return;
+  const mySet=mySet_();
+  const top=[...S.entries].sort((a,b)=>a.rank-b.rank).slice(0,20);
+  pane.innerHTML=`<div class="ovr"><table>
+    <thead><tr><th>Rank</th><th>Entry</th><th>Pts</th><th>Lineup</th></tr></thead>
+    <tbody>${top.map(e=>{
+      let str;
+      if(S.isSD){
+        const{cpt,flex}=parseSd(e.lu);
+        str=`<span style="color:${mySet.has(cpt)?'var(--acc)':'var(--gold)'}">[CPT] ${cpt||'?'} ${(S.cptOwn[cpt]||0).toFixed(1)}%</span> · `
+          +(flex||[]).map(p=>`<span style="${mySet.has(p)?'color:var(--acc)':''}">${p} <span style="color:var(--mut);font-size:10px">${(S.flexOwn[p]||0).toFixed(1)}%</span></span>`).join(' · ');
+      }else{
+        str=parseStd(e.lu).map(p=>`<span style="${mySet.has(p)?'color:var(--acc)':''}">${p} <span style="color:var(--mut);font-size:10px">${(S.comboOwn[p]||0).toFixed(1)}%</span></span>`).join(' · ');
+      }
+      return `<tr><td><span class="rc${e.rank<=5?' top':''}">#${e.rank}</span></td>
+        <td style="color:var(--mut);font-size:11px">${e.name}</td>
+        <td style="color:var(--grn)">${e.pts.toFixed(2)}</td>
+        <td style="font-size:11px;line-height:2">${str}</td></tr>`;
+    }).join('')}</tbody>
+  </table></div>`;
+}
+
+// ══════════════════════════════════════════════════════
+// SHAREABLE EXPORT
+// ══════════════════════════════════════════════════════
+function exportShareable(){
+  const payload={
+    isSD:S.isSD,
+    entries:S.entries,
+    cptOwn:S.cptOwn,
+    flexOwn:S.flexOwn,
+    comboOwn:S.comboOwn,
+    fpts:S.fpts,
+    contestName:S.contestName||'DK Contest',
+    exportedAt:new Date().toISOString(),
+  };
+
+  const script=`<script>
+const PRELOADED=${JSON.stringify(payload)};
+window.addEventListener('DOMContentLoaded',function(){
+  Object.assign(S,PRELOADED);
+  S.myLineups=[];
+  document.getElementById('up').style.display='none';
+  document.getElementById('app').style.display='block';
+  renderApp();
+  document.querySelector('.info-bar').innerHTML=
+    '<span>📦 <strong>Shared file</strong> — contest data from '+new Date(PRELOADED.exportedAt).toLocaleDateString()+' · '+PRELOADED.entries.length.toLocaleString()+' entries · '+PRELOADED.contestName+'</span>';
+});
+<\/script>`;
+
+  const html=document.documentElement.outerHTML.replace('</body>',script+'</body>');
+  const blob=new Blob([html],{type:'text/html'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download=`dk-analyzer-shared-${new Date().toISOString().slice(0,10)}.html`;
+  a.click();
+}
+
+// ══════════════════════════════════════════════════════
+// BOOT / FILE HANDLING
+// ══════════════════════════════════════════════════════
+function handleFile(file){
+  const fr=new FileReader();
+  fr.onload=e=>{
+    parseMyLineups();
+    process(e.target.result);
+    document.getElementById('up').style.display='none';
+    document.getElementById('app').style.display='block';
+    renderApp();
+  };
+  fr.readAsText(file);
+}
+
+function addRow(){
+  const c=document.getElementById('lu-rows');
+  const n=c.children.length+1;
+  const d=document.createElement('div');d.className='row';d.style.gridTemplateColumns='80px 1fr 34px';
+  d.innerHTML=`<label>LINEUP ${n}</label><input type="text" class="lu-inp" placeholder="CPT Name, FLEX Name, ..."><button class="btn btn-ghost btn-sm" onclick="this.closest('.row').remove()">✕</button>`;
+  c.append(d);
+}
+
+function resetApp(){
+  document.getElementById('app').style.display='none';
+  document.getElementById('up').style.display='block';
+  Object.assign(S,{entries:[],isSD:false,cptOwn:{},flexOwn:{},comboOwn:{},fpts:{},myLineups:[],contestName:'',rawCSV:''});
+}
+
+// File input
+document.getElementById('fi').addEventListener('change',e=>{if(e.target.files[0])handleFile(e.target.files[0]);});
+const dz=document.getElementById('dz');
+dz.addEventListener('dragover',e=>{e.preventDefault();dz.classList.add('over');});
+dz.addEventListener('dragleave',()=>dz.classList.remove('over'));
+dz.addEventListener('drop',e=>{e.preventDefault();dz.classList.remove('over');if(e.dataTransfer.files[0])handleFile(e.dataTransfer.files[0]);});
+</script>
+</body>
+</html>
