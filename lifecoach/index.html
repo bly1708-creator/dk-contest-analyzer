@@ -352,7 +352,13 @@ textarea{resize:vertical;}
             <button class="btn btn-sm" id="save-key">Save key</button>
           </div>
 
-          <div class="settings-sec">
+          <div class="settings-sec" id="sec-share">
+            <h3>Hand it to someone (ready-to-use link)</h3>
+            <p class="hint" style="margin-bottom:10px">Creates one link that sets up Lumen for another person automatically — your key included, no setup or passphrase on their end. They just tap it and start. Treat the link like a password and send it privately.</p>
+            <button class="btn btn-sm" id="make-link">Create a ready-to-use link</button>
+          </div>
+
+          <div class="settings-sec" id="sec-security">
             <h3>Security & backup</h3>
             <div class="field"><label>Change passphrase</label><input id="set-pass-cur" type="password" placeholder="Current passphrase" autocomplete="off"></div>
             <div class="field"><input id="set-pass-new" type="password" placeholder="New passphrase" autocomplete="new-password"></div>
@@ -389,7 +395,7 @@ const $=(s,r=document)=>r.querySelector(s);
 const $$=(s,r=document)=>[...r.querySelectorAll(s)];
 const ENC=new TextEncoder(), DEC=new TextDecoder();
 const MODEL="claude-opus-4-8";
-const LS_SALT="lumen.salt", LS_VAULT="lumen.vault";
+const LS_SALT="lumen.salt", LS_VAULT="lumen.vault", LS_MODE="lumen.mode";
 
 /* ───────── crypto ───────── */
 function b64(bytes){let s="";const c=8192;for(let i=0;i<bytes.length;i+=c)s+=String.fromCharCode.apply(null,bytes.subarray(i,i+c));return btoa(s);}
@@ -409,9 +415,15 @@ async function decryptObj(str,key){
   const pt=await crypto.subtle.decrypt({name:"AES-GCM",iv},key,ct);
   return JSON.parse(DEC.decode(pt));
 }
+// url-safe base64 for setup links
+function b64url(str){return btoa(unescape(encodeURIComponent(str))).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"");}
+function unb64url(str){str=str.replace(/-/g,"+").replace(/_/g,"/");return decodeURIComponent(escape(atob(str)));}
+// device key (non-extractable) kept in IndexedDB — enables encrypted-at-rest with auto-unlock
+function idb(mode,k,v){return new Promise((res,rej)=>{const o=indexedDB.open("lumen-kv",1);o.onupgradeneeded=()=>o.result.createObjectStore("kv");o.onerror=()=>rej(o.error);o.onsuccess=()=>{const s=o.result.transaction("kv",mode).objectStore("kv");const r=mode==="readwrite"?s.put(v,k):s.get(k);r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error);};});}
+async function getDeviceKey(){let k=await idb("readonly","deviceKey");if(!k){k=await crypto.subtle.generateKey({name:"AES-GCM",length:256},false,["encrypt","decrypt"]);await idb("readwrite","deviceKey",k);}return k;}
 
 /* ───────── state ───────── */
-let KEY=null, SALT=null;
+let KEY=null, SALT=null, DEVICE=false;
 let V={name:"",apiKey:"",chats:[],goals:[],journal:[],activeChat:null};
 let streaming=false;
 const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,7);
@@ -460,6 +472,11 @@ function enterApp(){
   $("#auth").style.display="none";
   $("#app").style.display="block";
   $("#set-name").value=V.name;
+  // In device mode (opened via a ready-to-use link) there's no passphrase to
+  // manage, so hide passphrase/backup/lock and the link generator.
+  $("#lock-btn").style.display = DEVICE?"none":"";
+  const sec=$("#sec-security"); if(sec)sec.style.display=DEVICE?"none":"";
+  const shr=$("#sec-share"); if(shr)shr.style.display=DEVICE?"none":"";
   renderConvList(); renderActiveChat(); refreshKeyStatus();
 }
 
@@ -876,7 +893,38 @@ $("#import-file").onchange=doImport;
 $("#wipe-btn").onclick=()=>{
   if(!confirm("This permanently erases ALL your data on this device — chats, goals, journal, key. This cannot be undone. Are you sure?"))return;
   if(!confirm("Really sure? There is no recovery."))return;
-  localStorage.removeItem(LS_SALT);localStorage.removeItem(LS_VAULT);location.reload();
+  localStorage.removeItem(LS_SALT);localStorage.removeItem(LS_VAULT);localStorage.removeItem(LS_MODE);location.reload();
+};
+
+/* ───────── ready-to-use link generator ───────── */
+$("#make-link").onclick=()=>{
+  if(!V.apiKey){nav("settings");toast("Add your API key first, then create the link.");return;}
+  modal(`<h2>Create a ready-to-use link</h2>
+    <p class="muted" style="margin-bottom:12px">Make a link that sets Lumen up for someone automatically — your API key travels inside it, so they tap once and start, with nothing to configure.</p>
+    <div class="field"><label>Their name</label><input id="ml-name" type="text" placeholder="e.g. her name"></div>
+    <div class="err" id="ml-err"></div>
+    <div id="ml-out" style="display:none">
+      <div class="field"><label>Their link — copy and send it privately</label><textarea id="ml-link" rows="4" readonly style="font-size:12px;font-family:ui-monospace,monospace"></textarea></div>
+      <div class="crisis" style="margin-top:0">Treat this link like a password: anyone who opens it can use your API key. Send it through a private channel, and you can rotate the key anytime in the Anthropic console.</div>
+    </div>
+    <div class="modal-foot"><button class="btn btn-ghost" id="m-close">Close</button><button class="btn" id="ml-copy" style="display:none">Copy link</button><button class="btn" id="ml-go">Create link</button></div>`);
+  $("#m-close").onclick=closeModal;
+  $("#ml-go").onclick=()=>{
+    const nm=$("#ml-name").value.trim();
+    if(!nm){$("#ml-err").textContent="Enter their name.";return;}
+    const base=location.origin+location.pathname.replace(/index\.html$/,"");
+    const link=base+"#s="+b64url(JSON.stringify({n:nm,k:V.apiKey}));
+    $("#ml-link").value=link;
+    $("#ml-out").style.display="block";
+    $("#ml-copy").style.display="inline-flex";
+    $("#ml-go").textContent="Recreate";
+    $("#ml-err").textContent="";
+  };
+  $("#ml-copy").onclick=async()=>{
+    const ta=$("#ml-link");
+    try{await navigator.clipboard.writeText(ta.value);toast("Link copied.");}
+    catch(_){ta.select();document.execCommand("copy");toast("Link copied.");}
+  };
 };
 
 /* ───────── modal + toast ───────── */
@@ -892,7 +940,34 @@ function toast(msg){
 }
 
 /* ───────── boot ───────── */
-showAuthMode();
+async function boot(){
+  // 1) Opened via a ready-to-use link? (#s=...) — only when this device has no space yet.
+  const m=location.hash.match(/[#&]s=([^&]+)/);
+  if(m && !localStorage.getItem(LS_VAULT)){
+    try{
+      const cfg=JSON.parse(unb64url(m[1]));
+      KEY=await getDeviceKey(); DEVICE=true;
+      V={name:cfg.n||"",apiKey:cfg.k||"",chats:[],goals:[],journal:[],activeChat:null};
+      localStorage.setItem(LS_MODE,"device");
+      await save();
+      history.replaceState(null,"",location.pathname+location.search); // strip the key from the URL bar
+      enterApp(); return;
+    }catch(_){ /* malformed link → fall through to normal flow */ }
+  }
+  // 2) Device-mode space already set up → auto-unlock, no passphrase screen.
+  if(localStorage.getItem(LS_MODE)==="device" && localStorage.getItem(LS_VAULT)){
+    try{
+      KEY=await getDeviceKey(); DEVICE=true;
+      V=await decryptObj(localStorage.getItem(LS_VAULT),KEY);
+      V.chats=V.chats||[];V.goals=V.goals||[];V.journal=V.journal||[];
+      if(location.hash) history.replaceState(null,"",location.pathname+location.search);
+      enterApp(); return;
+    }catch(_){ /* fall through */ }
+  }
+  // 3) Normal passphrase flow (owner's own space).
+  showAuthMode();
+}
+boot();
 </script>
 </body>
 </html>
