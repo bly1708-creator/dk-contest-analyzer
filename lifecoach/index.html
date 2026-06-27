@@ -241,6 +241,13 @@ textarea{resize:vertical;}
         <span>Encrypted locally. Your passphrase never leaves this device. There is no way to reset it.</span>
       </div>
     </div>
+
+    <div style="text-align:center;margin-top:18px;padding-top:16px;border-top:1px solid var(--line)">
+      <label style="font-size:13.5px;color:var(--ink2);cursor:pointer">Have a backup file?
+        <span style="color:var(--accent-d);font-weight:600;text-decoration:underline">Import it</span>
+        <input id="auth-import" type="file" style="display:none">
+      </label>
+    </div>
   </div>
 </div>
 
@@ -852,18 +859,20 @@ $("#export-btn").onclick=()=>{
   const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="lumen-backup-"+new Date().toISOString().slice(0,10)+".lumen";a.click();
   URL.revokeObjectURL(a.href);toast("Backup downloaded.");
 };
-$("#import-file").onchange=e=>{
+function doImport(e){
   const f=e.target.files[0];if(!f)return;
   const r=new FileReader();
   r.onload=()=>{
     try{const d=JSON.parse(r.result);if(!d.salt||!d.vault)throw 0;
-      if(!confirm("Importing will replace the data on this device with the backup. The backup's passphrase will be required to unlock. Continue?"))return;
+      if(!confirm("Import this backup? It will replace any data on this device, and you'll unlock with the backup's passphrase."))return;
       localStorage.setItem(LS_SALT,d.salt);localStorage.setItem(LS_VAULT,d.vault);
-      toast("Backup imported. Reloading…");setTimeout(()=>location.reload(),800);
-    }catch(_){toast("That doesn't look like a valid Lumen backup.");}
+      toast("Backup imported. Opening…");setTimeout(()=>location.reload(),800);
+    }catch(_){toast("That doesn't look like a valid Lumen backup file.");}
   };
   r.readAsText(f);e.target.value="";
-};
+}
+$("#import-file").onchange=doImport;
+{const ai=$("#auth-import");if(ai)ai.onchange=doImport;}
 $("#wipe-btn").onclick=()=>{
   if(!confirm("This permanently erases ALL your data on this device — chats, goals, journal, key. This cannot be undone. Are you sure?"))return;
   if(!confirm("Really sure? There is no recovery."))return;
