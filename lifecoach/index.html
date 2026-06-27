@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light">
+<title>Lumen — Your Personal Coach</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,500&family=Inter:wght@400;500;600;700&display=swap');
+:root{
+  --bg:#f5f1ea; --bg2:#faf7f1; --card:#ffffff; --ink:#2c2a26; --ink2:#6b655c;
+  --line:#e6ded2; --line2:#d8cdbb; --accent:#5b8a72; --accent-d:#406354; --accent-soft:#e8f0ea;
+  --warm:#c98a5e; --warm-soft:#f6e9df; --lav:#8a7fb0; --lav-soft:#ece8f4;
+  --danger:#b4533f; --shadow:0 1px 2px rgba(44,42,38,.04),0 4px 16px rgba(44,42,38,.06);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;}
+body{background:var(--bg);color:var(--ink);font-family:'Inter',system-ui,sans-serif;font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased;}
+h1,h2,h3,.serif{font-family:'Fraunces',Georgia,serif;font-weight:600;letter-spacing:-.01em;}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit;}
+input,textarea,select{font-family:inherit;font-size:15px;color:var(--ink);}
+textarea{resize:vertical;}
+::placeholder{color:#a9a195;}
+.btn{background:var(--accent);color:#fff;padding:11px 20px;border-radius:10px;font-weight:600;font-size:14px;transition:.15s;display:inline-flex;align-items:center;gap:8px;justify-content:center;}
+.btn:hover{background:var(--accent-d);}
+.btn:disabled{opacity:.5;cursor:not-allowed;}
+.btn-ghost{background:transparent;border:1px solid var(--line2);color:var(--ink2);}
+.btn-ghost:hover{border-color:var(--ink2);color:var(--ink);background:transparent;}
+.btn-sm{padding:7px 13px;font-size:13px;border-radius:8px;}
+.btn-danger{background:transparent;border:1px solid var(--danger);color:var(--danger);}
+.btn-danger:hover{background:var(--danger);color:#fff;}
+.field{display:block;margin-bottom:14px;}
+.field label{display:block;font-size:13px;font-weight:600;color:var(--ink2);margin-bottom:6px;}
+.field input,.field textarea,.field select{width:100%;background:var(--bg2);border:1px solid var(--line2);border-radius:10px;padding:11px 13px;transition:.15s;}
+.field input:focus,.field textarea:focus,.field select:focus{outline:none;border-color:var(--accent);background:#fff;box-shadow:0 0 0 3px var(--accent-soft);}
+.hint{font-size:12.5px;color:var(--ink2);line-height:1.5;margin-top:5px;}
+.err{color:var(--danger);font-size:13px;margin-top:8px;min-height:18px;}
+
+/* ── AUTH SCREENS ── */
+#auth{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;background:radial-gradient(1200px 600px at 50% -10%,#fbf6ee 0%,var(--bg) 60%);}
+.auth-card{width:100%;max-width:430px;background:var(--card);border:1px solid var(--line);border-radius:20px;padding:34px 32px;box-shadow:var(--shadow);}
+.brand{display:flex;align-items:center;gap:11px;margin-bottom:6px;}
+.logo{width:38px;height:38px;border-radius:11px;background:linear-gradient(135deg,var(--accent),var(--lav));display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.logo svg{width:22px;height:22px;}
+.brand h1{font-size:25px;}
+.auth-sub{color:var(--ink2);font-size:14px;margin-bottom:24px;line-height:1.6;}
+.privacy-note{background:var(--accent-soft);border:1px solid #d4e3d9;border-radius:12px;padding:13px 15px;font-size:12.5px;color:var(--accent-d);line-height:1.6;margin-top:18px;display:flex;gap:10px;}
+.privacy-note svg{width:17px;height:17px;flex-shrink:0;margin-top:1px;}
+
+/* ── APP SHELL ── */
+#app{display:none;min-height:100vh;}
+.shell{display:flex;min-height:100vh;}
+.side{width:230px;flex-shrink:0;background:var(--bg2);border-right:1px solid var(--line);display:flex;flex-direction:column;padding:18px 14px;position:sticky;top:0;height:100vh;}
+.side .brand{padding:4px 8px 18px;}
+.side .brand h1{font-size:20px;}
+.nav{display:flex;flex-direction:column;gap:3px;flex:1;}
+.nav-item{display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:10px;color:var(--ink2);font-weight:500;font-size:14.5px;transition:.12s;text-align:left;width:100%;}
+.nav-item svg{width:19px;height:19px;flex-shrink:0;opacity:.85;}
+.nav-item:hover{background:var(--card);color:var(--ink);}
+.nav-item.active{background:var(--accent);color:#fff;}
+.nav-item.active svg{opacity:1;}
+.side-foot{font-size:11.5px;color:#a9a195;padding:10px 10px 2px;border-top:1px solid var(--line);}
+.side-foot button{color:var(--ink2);font-size:12.5px;font-weight:500;}
+.side-foot button:hover{color:var(--ink);}
+.main{flex:1;min-width:0;display:flex;flex-direction:column;}
+.topbar{display:none;}
+
+.view{display:none;flex:1;min-height:0;flex-direction:column;}
+.view.active{display:flex;}
+.view-pad{padding:28px 32px;max-width:860px;width:100%;margin:0 auto;}
+.view-head{margin-bottom:22px;}
+.view-head h2{font-size:27px;margin-bottom:3px;}
+.view-head p{color:var(--ink2);font-size:14px;}
+
+/* ── CHAT ── */
+.chat-wrap{flex:1;display:flex;min-height:0;}
+.chat-list{width:236px;flex-shrink:0;border-right:1px solid var(--line);padding:16px 12px;overflow-y:auto;background:var(--bg2);}
+.chat-list .nb{width:100%;margin-bottom:12px;}
+.conv{padding:10px 12px;border-radius:9px;font-size:13.5px;color:var(--ink2);cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transition:.12s;display:flex;align-items:center;gap:8px;}
+.conv:hover{background:var(--card);color:var(--ink);}
+.conv.active{background:var(--accent-soft);color:var(--accent-d);font-weight:600;}
+.conv .del{margin-left:auto;opacity:0;color:#bbb;font-size:16px;line-height:1;padding:0 2px;}
+.conv:hover .del{opacity:1;}
+.conv .del:hover{color:var(--danger);}
+.chat-main{flex:1;display:flex;flex-direction:column;min-width:0;}
+.msgs{flex:1;overflow-y:auto;padding:26px 0;}
+.msgs-inner{max-width:720px;margin:0 auto;padding:0 24px;display:flex;flex-direction:column;gap:18px;}
+.msg{display:flex;gap:12px;align-items:flex-start;}
+.msg .av{width:30px;height:30px;border-radius:9px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;}
+.msg.user .av{background:var(--lav);}
+.msg.bot .av{background:linear-gradient(135deg,var(--accent),var(--accent-d));}
+.bubble{padding:2px 2px;font-size:15px;line-height:1.65;max-width:100%;}
+.msg.user .bubble{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:11px 15px;}
+.bubble p{margin:0 0 10px;}
+.bubble p:last-child{margin-bottom:0;}
+.bubble ul,.bubble ol{margin:0 0 10px;padding-left:20px;}
+.bubble li{margin-bottom:4px;}
+.bubble strong{font-weight:650;}
+.bubble em{font-style:italic;}
+.bubble h3{font-size:16px;margin:6px 0 8px;}
+.bubble code{background:var(--bg);padding:1px 5px;border-radius:4px;font-size:13px;font-family:ui-monospace,monospace;}
+.typing{display:inline-flex;gap:4px;padding:4px 0;}
+.typing span{width:7px;height:7px;border-radius:50%;background:var(--accent);opacity:.4;animation:bl 1.2s infinite;}
+.typing span:nth-child(2){animation-delay:.2s;}.typing span:nth-child(3){animation-delay:.4s;}
+@keyframes bl{0%,60%,100%{opacity:.3;transform:translateY(0);}30%{opacity:1;transform:translateY(-3px);}}
+.composer{border-top:1px solid var(--line);padding:16px 24px;background:var(--bg2);}
+.composer-inner{max-width:720px;margin:0 auto;display:flex;gap:10px;align-items:flex-end;background:var(--card);border:1px solid var(--line2);border-radius:14px;padding:8px 8px 8px 16px;transition:.15s;}
+.composer-inner:focus-within{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft);}
+.composer textarea{flex:1;border:none;background:transparent;resize:none;padding:6px 0;max-height:160px;line-height:1.5;}
+.composer textarea:focus{outline:none;}
+.send{width:38px;height:38px;border-radius:10px;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:.15s;}
+.send:hover{background:var(--accent-d);}.send:disabled{opacity:.4;}
+.send svg{width:18px;height:18px;}
+.empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px;color:var(--ink2);}
+.empty .logo{width:54px;height:54px;border-radius:16px;margin-bottom:16px;}
+.empty h3{font-size:22px;color:var(--ink);margin-bottom:8px;}
+.empty p{max-width:380px;font-size:14px;line-height:1.6;margin-bottom:20px;}
+.starters{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;max-width:520px;}
+.starter{background:var(--card);border:1px solid var(--line2);border-radius:20px;padding:8px 15px;font-size:13px;color:var(--ink2);transition:.12s;}
+.starter:hover{border-color:var(--accent);color:var(--accent-d);background:var(--accent-soft);}
+
+/* ── CARDS / GOALS ── */
+.cards{display:grid;gap:16px;}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px;box-shadow:var(--shadow);}
+.card h3{font-size:18px;margin-bottom:4px;}
+.tool-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px;}
+.tool-card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px;cursor:pointer;transition:.15s;box-shadow:var(--shadow);}
+.tool-card:hover{transform:translateY(-2px);border-color:var(--accent);}
+.tool-ic{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;margin-bottom:13px;}
+.tool-ic svg{width:22px;height:22px;}
+.tool-card h3{font-size:16.5px;margin-bottom:4px;}
+.tool-card p{font-size:13px;color:var(--ink2);line-height:1.5;}
+.goal{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px;box-shadow:var(--shadow);margin-bottom:16px;}
+.goal-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;}
+.goal-top h3{font-size:18px;}
+.goal .why{font-size:13.5px;color:var(--ink2);font-style:italic;margin:4px 0 14px;}
+.prog{height:7px;background:var(--line);border-radius:4px;overflow:hidden;margin:12px 0;}
+.prog i{display:block;height:100%;background:linear-gradient(90deg,var(--accent),var(--accent-d));border-radius:4px;transition:width .4s;}
+.steps{display:flex;flex-direction:column;gap:2px;margin-top:6px;}
+.step{display:flex;gap:11px;align-items:flex-start;padding:9px 8px;border-radius:9px;transition:.12s;}
+.step:hover{background:var(--bg);}
+.step .chk{width:21px;height:21px;border:2px solid var(--line2);border-radius:7px;flex-shrink:0;margin-top:1px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.12s;}
+.step .chk:hover{border-color:var(--accent);}
+.step.done .chk{background:var(--accent);border-color:var(--accent);}
+.step .chk svg{width:13px;height:13px;color:#fff;opacity:0;}
+.step.done .chk svg{opacity:1;}
+.step-body{flex:1;min-width:0;}
+.step .t{font-size:14.5px;font-weight:500;}
+.step.done .t{text-decoration:line-through;color:var(--ink2);}
+.step .d{font-size:13px;color:var(--ink2);margin-top:2px;line-height:1.45;}
+.goal-actions{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;}
+.tag{font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:3px 8px;border-radius:6px;background:var(--accent-soft);color:var(--accent-d);}
+
+/* modal */
+.modal-bg{position:fixed;inset:0;background:rgba(44,42,38,.4);backdrop-filter:blur(3px);display:none;align-items:center;justify-content:center;padding:20px;z-index:50;}
+.modal-bg.show{display:flex;}
+.modal{background:var(--card);border-radius:20px;padding:26px;width:100%;max-width:480px;box-shadow:0 20px 60px rgba(0,0,0,.2);max-height:90vh;overflow-y:auto;}
+.modal h2{font-size:21px;margin-bottom:14px;}
+.modal-foot{display:flex;gap:10px;justify-content:flex-end;margin-top:8px;}
+
+/* breathing */
+.breathe-stage{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:30px 0;}
+.orb{width:180px;height:180px;border-radius:50%;background:radial-gradient(circle at 35% 30%,var(--accent-soft),var(--accent));display:flex;align-items:center;justify-content:center;transition:transform 4s ease-in-out;box-shadow:0 0 50px rgba(91,138,114,.3);}
+.orb.in{transform:scale(1.35);}
+.orb.out{transform:scale(.8);}
+.orb-label{color:#fff;font-family:'Fraunces',serif;font-size:21px;text-shadow:0 1px 4px rgba(0,0,0,.15);}
+.breathe-count{font-size:14px;color:var(--ink2);margin-top:24px;}
+
+/* tool panel (reframe / journal) */
+.tool-panel .out{background:var(--bg2);border:1px solid var(--line);border-radius:12px;padding:16px;font-size:14.5px;line-height:1.65;min-height:60px;margin-top:6px;}
+.tool-panel .out p{margin:0 0 10px;}.tool-panel .out p:last-child{margin:0;}
+.tool-panel .out ul,.tool-panel .out ol{margin:0 0 8px;padding-left:18px;}
+.ground-step{background:var(--bg2);border:1px solid var(--line);border-radius:12px;padding:18px;margin-bottom:12px;}
+.ground-step .n{font-size:13px;font-weight:700;color:var(--accent-d);text-transform:uppercase;letter-spacing:.05em;}
+.ground-step h4{font-size:17px;margin:4px 0 8px;font-family:'Fraunces',serif;font-weight:600;}
+.ground-step textarea{width:100%;border:1px solid var(--line2);border-radius:9px;padding:10px;background:#fff;}
+.journal-entry{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin-bottom:12px;box-shadow:var(--shadow);}
+.journal-entry .meta{font-size:12px;color:var(--ink2);margin-bottom:6px;display:flex;justify-content:space-between;align-items:center;}
+.journal-entry .pr{font-style:italic;color:var(--accent-d);font-size:13.5px;margin-bottom:8px;}
+.journal-entry .tx{font-size:14.5px;line-height:1.6;white-space:pre-wrap;}
+.muted{color:var(--ink2);font-size:14px;}
+.center-empty{text-align:center;padding:50px 20px;color:var(--ink2);}
+.crisis{background:var(--warm-soft);border:1px solid #ecd5c1;color:#8a4a2c;border-radius:10px;padding:11px 14px;font-size:12.5px;line-height:1.55;margin-top:14px;}
+.crisis a{color:#8a4a2c;font-weight:600;}
+.settings-sec{margin-bottom:26px;}
+.settings-sec h3{font-size:16px;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--line);}
+.kv{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:8px 0;font-size:14px;}
+.kv .k{color:var(--ink2);}
+.banner{background:var(--warm-soft);border:1px solid #ecd5c1;border-radius:10px;padding:10px 14px;font-size:13px;color:#8a4a2c;margin-bottom:16px;display:flex;gap:9px;align-items:center;}
+.banner button{margin-left:auto;color:#8a4a2c;font-weight:600;font-size:13px;text-decoration:underline;flex-shrink:0;}
+
+@media(max-width:780px){
+  .side{position:fixed;left:0;top:0;z-index:40;transform:translateX(-100%);transition:.25s;box-shadow:0 0 40px rgba(0,0,0,.15);}
+  .side.open{transform:translateX(0);}
+  .topbar{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid var(--line);background:var(--bg2);position:sticky;top:0;z-index:20;}
+  .topbar h1{font-size:18px;font-family:'Fraunces',serif;}
+  .menu-btn{width:38px;height:38px;border-radius:9px;border:1px solid var(--line2);display:flex;align-items:center;justify-content:center;}
+  .menu-btn svg{width:20px;height:20px;}
+  .chat-list{display:none;}
+  .view-pad{padding:18px;}
+  .scrim{position:fixed;inset:0;background:rgba(0,0,0,.3);z-index:30;display:none;}
+  .scrim.show{display:block;}
+}
+</style>
+</head>
+<body>
+
+<!-- ══ AUTH ══ -->
+<div id="auth">
+  <div class="auth-card">
+    <div class="brand">
+      <div class="logo"><svg viewBox="0 0 24 24" fill="none"><path d="M12 3v2M12 19v2M5 12H3M21 12h-2M6 6l-1.5-1.5M19.5 19.5L18 18M18 6l1.5-1.5M4.5 19.5L6 18" stroke="#fff" stroke-width="1.7" stroke-linecap="round"/><circle cx="12" cy="12" r="4" fill="#fff"/></svg></div>
+      <h1>Lumen</h1>
+    </div>
+
+    <!-- setup -->
+    <div id="setup">
+      <p class="auth-sub">A private space for reflection, planning, and gentle guidance. Let's set it up — this stays just for you, on this device.</p>
+      <div class="field"><label>Your name</label><input id="su-name" type="text" placeholder="What should Sage call you?" autocomplete="off"></div>
+      <div class="field"><label>Create a passphrase</label><input id="su-pass" type="password" placeholder="Used to unlock & encrypt everything" autocomplete="new-password"></div>
+      <div class="field"><label>Confirm passphrase</label><input id="su-pass2" type="password" placeholder="Type it again" autocomplete="new-password"></div>
+      <div class="field"><label>Anthropic API key <span style="font-weight:400;color:#a9a195">(optional now)</span></label><input id="su-key" type="password" placeholder="sk-ant-..." autocomplete="off">
+        <div class="hint">Powers the AI coach. Stored encrypted on this device only. You can add it later in Settings. <a href="https://console.anthropic.com/settings/keys" target="_blank" rel="noopener" style="color:var(--accent-d)">Get a key →</a></div>
+      </div>
+      <div class="err" id="su-err"></div>
+      <button class="btn" style="width:100%" id="su-go">Create my space</button>
+      <div class="privacy-note">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M12 2l7 3v6c0 5-3.5 8-7 9-3.5-1-7-4-7-9V5l7-3z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M9 12l2 2 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span><strong>Your privacy is the point.</strong> Everything you write is encrypted with your passphrase and stored only in this browser. There's no account and no server. Only the exact message you send to the coach reaches Anthropic. If you forget your passphrase, your data can't be recovered — so keep it safe.</span>
+      </div>
+    </div>
+
+    <!-- unlock -->
+    <div id="unlock" style="display:none">
+      <p class="auth-sub">Welcome back. Enter your passphrase to unlock your space.</p>
+      <div class="field"><input id="un-pass" type="password" placeholder="Passphrase" autocomplete="current-password" autofocus></div>
+      <div class="err" id="un-err"></div>
+      <button class="btn" style="width:100%" id="un-go">Unlock</button>
+      <div class="privacy-note">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M12 2l7 3v6c0 5-3.5 8-7 9-3.5-1-7-4-7-9V5l7-3z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+        <span>Encrypted locally. Your passphrase never leaves this device. There is no way to reset it.</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ APP ══ -->
+<div id="app">
+  <div class="scrim" id="scrim"></div>
+  <div class="shell">
+    <aside class="side" id="side">
+      <div class="brand">
+        <div class="logo"><svg viewBox="0 0 24 24" fill="none"><path d="M12 3v2M12 19v2M5 12H3M21 12h-2M6 6l-1.5-1.5M19.5 19.5L18 18M18 6l1.5-1.5M4.5 19.5L6 18" stroke="#fff" stroke-width="1.7" stroke-linecap="round"/><circle cx="12" cy="12" r="4" fill="#fff"/></svg></div>
+        <h1>Lumen</h1>
+      </div>
+      <nav class="nav" id="nav">
+        <button class="nav-item active" data-v="coach"><svg viewBox="0 0 24 24" fill="none"><path d="M21 11.5a8.38 8.38 0 01-9 8.4 8.5 8.5 0 01-3.8-.9L3 21l1.9-5.7A8.38 8.38 0 0121 11.5z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>Coach</button>
+        <button class="nav-item" data-v="goals"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.7"/><circle cx="12" cy="12" r="5" stroke="currentColor" stroke-width="1.7"/><circle cx="12" cy="12" r="1.4" fill="currentColor"/></svg>Goals & Plans</button>
+        <button class="nav-item" data-v="tools"><svg viewBox="0 0 24 24" fill="none"><path d="M12 21c4.97 0 9-3.5 9-8 0-3-2-5.5-4.5-5.5-1.5 0-2.5 1-3 2-.5-1.5-2-3.5-4.5-3.5C6 6 4 8.5 4 11.5 4 16 7.5 21 12 21z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>Coping Tools</button>
+        <button class="nav-item" data-v="journal"><svg viewBox="0 0 24 24" fill="none"><path d="M5 4h11l3 3v13H5z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M9 9h6M9 13h6M9 17h3" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>Journal</button>
+        <button class="nav-item" data-v="settings"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.7"/><path d="M19 12a7 7 0 00-.1-1.2l2-1.5-2-3.4-2.3 1a7 7 0 00-2-1.2l-.4-2.5H8.8l-.4 2.5a7 7 0 00-2 1.2l-2.3-1-2 3.4 2 1.5A7 7 0 005 12c0 .4 0 .8.1 1.2l-2 1.5 2 3.4 2.3-1a7 7 0 002 1.2l.4 2.5h4.4l.4-2.5a7 7 0 002-1.2l2.3 1 2-3.4-2-1.5c.1-.4.1-.8.1-1.2z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>Settings</button>
+      </nav>
+      <div class="side-foot">
+        <button id="lock-btn">🔒 Lock space</button>
+        <div style="margin-top:6px">Private · encrypted · on-device</div>
+      </div>
+    </aside>
+
+    <div class="main">
+      <div class="topbar">
+        <button class="menu-btn" id="menu-btn"><svg viewBox="0 0 24 24" fill="none"><path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
+        <h1 id="top-title">Coach</h1>
+      </div>
+
+      <!-- COACH -->
+      <section class="view active" id="v-coach">
+        <div class="chat-wrap">
+          <div class="chat-list">
+            <button class="btn nb" id="new-chat">+ New conversation</button>
+            <div id="conv-list"></div>
+          </div>
+          <div class="chat-main">
+            <div class="msgs" id="msgs"><div class="msgs-inner" id="msgs-inner"></div></div>
+            <div class="composer">
+              <div class="composer-inner">
+                <textarea id="chat-input" rows="1" placeholder="Share what's on your mind…"></textarea>
+                <button class="send" id="send-btn"><svg viewBox="0 0 24 24" fill="none"><path d="M4 12l16-8-6 8 6 8-16-8z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" fill="currentColor"/></svg></button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- GOALS -->
+      <section class="view" id="v-goals">
+        <div class="view-pad">
+          <div class="view-head" style="display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap">
+            <div><h2>Goals & Plans</h2><p>Name what matters, and let Sage help break it into gentle, doable steps.</p></div>
+            <button class="btn" id="add-goal">+ New goal</button>
+          </div>
+          <div id="goals-list"></div>
+        </div>
+      </section>
+
+      <!-- TOOLS -->
+      <section class="view" id="v-tools">
+        <div class="view-pad">
+          <div class="view-head"><h2>Coping Tools</h2><p>Small practices for hard moments — and good ones too.</p></div>
+          <div class="tool-grid">
+            <div class="tool-card" data-tool="breathe"><div class="tool-ic" style="background:var(--accent-soft)"><svg viewBox="0 0 24 24" fill="none" style="color:var(--accent-d)"><circle cx="12" cy="12" r="8" stroke="currentColor" stroke-width="1.7"/><circle cx="12" cy="12" r="3.5" stroke="currentColor" stroke-width="1.7"/></svg></div><h3>Box Breathing</h3><p>A guided 4-4-4-4 rhythm to calm your nervous system.</p></div>
+            <div class="tool-card" data-tool="ground"><div class="tool-ic" style="background:var(--lav-soft)"><svg viewBox="0 0 24 24" fill="none" style="color:var(--lav)"><path d="M12 2v20M2 12h20" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.6"/></svg></div><h3>5-4-3-2-1 Grounding</h3><p>Reconnect with the present moment through your senses.</p></div>
+            <div class="tool-card" data-tool="reframe"><div class="tool-ic" style="background:var(--warm-soft)"><svg viewBox="0 0 24 24" fill="none" style="color:var(--warm)"><path d="M4 12a8 8 0 0114-5l2-2v6h-6l2.3-2.3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M20 12a8 8 0 01-14 5l-2 2v-6h6l-2.3 2.3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div><h3>Reframe a Thought</h3><p>Gently examine a tough thought with a CBT-informed lens.</p></div>
+            <div class="tool-card" data-tool="prompt"><div class="tool-ic" style="background:var(--accent-soft)"><svg viewBox="0 0 24 24" fill="none" style="color:var(--accent-d)"><path d="M14 3l7 7-11 11H3v-7L14 3z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg></div><h3>Journaling Prompt</h3><p>A fresh reflective prompt, then write it out and save.</p></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- JOURNAL -->
+      <section class="view" id="v-journal">
+        <div class="view-pad">
+          <div class="view-head" style="display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap">
+            <div><h2>Journal</h2><p>Your reflections and reframes, gathered in one private place.</p></div>
+            <button class="btn btn-ghost btn-sm" id="add-journal">+ Free write</button>
+          </div>
+          <div id="journal-list"></div>
+        </div>
+      </section>
+
+      <!-- SETTINGS -->
+      <section class="view" id="v-settings">
+        <div class="view-pad">
+          <div class="view-head"><h2>Settings</h2><p>You're in control of everything here.</p></div>
+
+          <div class="settings-sec">
+            <h3>Your profile</h3>
+            <div class="field"><label>Name</label><input id="set-name" type="text"></div>
+            <button class="btn btn-sm" id="save-name">Save name</button>
+          </div>
+
+          <div class="settings-sec">
+            <h3>AI coach (Anthropic API key)</h3>
+            <p class="hint" style="margin-bottom:10px">Stored encrypted on this device. Model: Claude (Opus 4.8). <a href="https://console.anthropic.com/settings/keys" target="_blank" rel="noopener" style="color:var(--accent-d)">Manage keys →</a></p>
+            <div class="kv"><span class="k">Status</span><span id="key-status"></span></div>
+            <div class="field" style="margin-top:8px"><label>Update key</label><input id="set-key" type="password" placeholder="sk-ant-..."></div>
+            <button class="btn btn-sm" id="save-key">Save key</button>
+          </div>
+
+          <div class="settings-sec">
+            <h3>Security & backup</h3>
+            <div class="field"><label>Change passphrase</label><input id="set-pass-cur" type="password" placeholder="Current passphrase" autocomplete="off"></div>
+            <div class="field"><input id="set-pass-new" type="password" placeholder="New passphrase" autocomplete="new-password"></div>
+            <button class="btn btn-sm" id="save-pass">Change passphrase</button>
+            <div class="err" id="pass-err"></div>
+            <div style="margin-top:18px;display:flex;gap:10px;flex-wrap:wrap">
+              <button class="btn btn-ghost btn-sm" id="export-btn">Export encrypted backup</button>
+              <label class="btn btn-ghost btn-sm" style="cursor:pointer">Import backup<input id="import-file" type="file" accept=".lumen,.json" style="display:none"></label>
+            </div>
+            <p class="hint" style="margin-top:8px">The backup file is encrypted with your passphrase — safe to store in the cloud or email to yourself.</p>
+          </div>
+
+          <div class="settings-sec">
+            <h3>Danger zone</h3>
+            <p class="hint" style="margin-bottom:10px">Permanently erase everything from this device. This cannot be undone.</p>
+            <button class="btn btn-danger btn-sm" id="wipe-btn">Erase all my data</button>
+          </div>
+
+          <div class="crisis">
+            <strong>In crisis?</strong> Lumen is a supportive tool, not a substitute for professional care. If you're struggling, please reach out — in the US call or text <a href="tel:988">988</a> (Suicide &amp; Crisis Lifeline), or text HOME to <strong>741741</strong>. In an emergency call 911. You deserve support.
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+</div>
+
+<!-- modal -->
+<div class="modal-bg" id="modal-bg"><div class="modal" id="modal"></div></div>
+
+<script>
+"use strict";
+const $=(s,r=document)=>r.querySelector(s);
+const $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const ENC=new TextEncoder(), DEC=new TextDecoder();
+const MODEL="claude-opus-4-8";
+const LS_SALT="lumen.salt", LS_VAULT="lumen.vault";
+
+/* ───────── crypto ───────── */
+function b64(bytes){let s="";const c=8192;for(let i=0;i<bytes.length;i+=c)s+=String.fromCharCode.apply(null,bytes.subarray(i,i+c));return btoa(s);}
+function unb64(str){const s=atob(str),a=new Uint8Array(s.length);for(let i=0;i<s.length;i++)a[i]=s.charCodeAt(i);return a;}
+function cat(a,b){const c=new Uint8Array(a.length+b.length);c.set(a,0);c.set(b,a.length);return c;}
+async function deriveKey(pass,salt){
+  const mat=await crypto.subtle.importKey("raw",ENC.encode(pass),"PBKDF2",false,["deriveKey"]);
+  return crypto.subtle.deriveKey({name:"PBKDF2",salt,iterations:250000,hash:"SHA-256"},mat,{name:"AES-GCM",length:256},false,["encrypt","decrypt"]);
+}
+async function encryptObj(obj,key){
+  const iv=crypto.getRandomValues(new Uint8Array(12));
+  const ct=new Uint8Array(await crypto.subtle.encrypt({name:"AES-GCM",iv},key,ENC.encode(JSON.stringify(obj))));
+  return b64(cat(iv,ct));
+}
+async function decryptObj(str,key){
+  const raw=unb64(str), iv=raw.slice(0,12), ct=raw.slice(12);
+  const pt=await crypto.subtle.decrypt({name:"AES-GCM",iv},key,ct);
+  return JSON.parse(DEC.decode(pt));
+}
+
+/* ───────── state ───────── */
+let KEY=null, SALT=null;
+let V={name:"",apiKey:"",chats:[],goals:[],journal:[],activeChat:null};
+let streaming=false;
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+
+async function save(){
+  if(!KEY)return;
+  localStorage.setItem(LS_VAULT, await encryptObj(V,KEY));
+}
+
+/* ───────── auth flow ───────── */
+function showAuthMode(){
+  const has=localStorage.getItem(LS_VAULT);
+  $("#setup").style.display = has?"none":"block";
+  $("#unlock").style.display = has?"block":"none";
+  if(has) setTimeout(()=>$("#un-pass").focus(),50);
+}
+$("#su-go").onclick=async()=>{
+  const name=$("#su-name").value.trim();
+  const p1=$("#su-pass").value, p2=$("#su-pass2").value, key=$("#su-key").value.trim();
+  const e=$("#su-err"); e.textContent="";
+  if(!name){e.textContent="Please enter your name.";return;}
+  if(p1.length<6){e.textContent="Passphrase should be at least 6 characters.";return;}
+  if(p1!==p2){e.textContent="Passphrases don't match.";return;}
+  SALT=crypto.getRandomValues(new Uint8Array(16));
+  localStorage.setItem(LS_SALT,b64(SALT));
+  KEY=await deriveKey(p1,SALT);
+  V={name,apiKey:key,chats:[],goals:[],journal:[],activeChat:null};
+  await save();
+  enterApp();
+};
+$("#un-go").onclick=unlock;
+$("#un-pass").addEventListener("keydown",e=>{if(e.key==="Enter")unlock();});
+async function unlock(){
+  const e=$("#un-err"); e.textContent="";
+  const pass=$("#un-pass").value;
+  try{
+    SALT=unb64(localStorage.getItem(LS_SALT));
+    KEY=await deriveKey(pass,SALT);
+    V=await decryptObj(localStorage.getItem(LS_VAULT),KEY);
+    V.chats=V.chats||[];V.goals=V.goals||[];V.journal=V.journal||[];
+    $("#un-pass").value="";
+    enterApp();
+  }catch(err){ e.textContent="Incorrect passphrase. Try again."; KEY=null; }
+}
+function enterApp(){
+  $("#auth").style.display="none";
+  $("#app").style.display="block";
+  $("#set-name").value=V.name;
+  renderConvList(); renderActiveChat(); refreshKeyStatus();
+}
+
+/* ───────── navigation ───────── */
+$$("#nav .nav-item").forEach(b=>b.onclick=()=>nav(b.dataset.v));
+function nav(v){
+  $$("#nav .nav-item").forEach(x=>x.classList.toggle("active",x.dataset.v===v));
+  $$(".view").forEach(x=>x.classList.remove("active"));
+  $("#v-"+v).classList.add("active");
+  $("#top-title").textContent=$(`[data-v="${v}"]`).textContent.trim();
+  if(v==="goals")renderGoals();
+  if(v==="journal")renderJournal();
+  if(v==="settings")refreshKeyStatus();
+  closeSide();
+}
+$("#menu-btn").onclick=()=>{$("#side").classList.add("open");$("#scrim").classList.add("show");};
+$("#scrim").onclick=closeSide;
+function closeSide(){$("#side").classList.remove("open");$("#scrim").classList.remove("show");}
+$("#lock-btn").onclick=()=>location.reload();
+
+/* ───────── Anthropic API ───────── */
+async function callClaude(messages,{system,maxTokens=2048,stream=false,onText,outputSchema}={}){
+  if(!V.apiKey) throw new Error("NO_KEY");
+  const body={model:MODEL,max_tokens:maxTokens,messages};
+  if(system)body.system=system;
+  if(outputSchema)body.output_config={format:{type:"json_schema",schema:outputSchema}};
+  if(stream)body.stream=true;
+  const res=await fetch("https://api.anthropic.com/v1/messages",{
+    method:"POST",
+    headers:{
+      "content-type":"application/json",
+      "x-api-key":V.apiKey,
+      "anthropic-version":"2023-06-01",
+      "anthropic-dangerous-direct-browser-access":"true"
+    },
+    body:JSON.stringify(body)
+  });
+  if(!res.ok){
+    let msg="Request failed ("+res.status+")";
+    try{const j=await res.json(); if(j.error&&j.error.message)msg=j.error.message;}catch(_){}
+    if(res.status===401)msg="Your API key was rejected. Please check it in Settings.";
+    throw new Error(msg);
+  }
+  if(!stream){
+    const j=await res.json();
+    return (j.content||[]).filter(b=>b.type==="text").map(b=>b.text).join("");
+  }
+  const reader=res.body.getReader(); let buf="", full="";
+  while(true){
+    const {done,value}=await reader.read(); if(done)break;
+    buf+=DEC.decode(value,{stream:true});
+    let i;
+    while((i=buf.indexOf("\n"))>=0){
+      const line=buf.slice(0,i); buf=buf.slice(i+1);
+      if(!line.startsWith("data:"))continue;
+      const d=line.slice(5).trim();
+      if(!d||d==="[DONE]")continue;
+      let ev; try{ev=JSON.parse(d);}catch(_){continue;}
+      if(ev.type==="content_block_delta"&&ev.delta&&ev.delta.type==="text_delta"){full+=ev.delta.text;onText&&onText(full);}
+      else if(ev.type==="error"){throw new Error((ev.error&&ev.error.message)||"Stream error");}
+    }
+  }
+  return full;
+}
+
+/* ───────── markdown-lite ───────── */
+function esc(s){return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+function md(t){
+  let s=esc(t);
+  s=s.replace(/`([^`]+)`/g,"<code>$1</code>");
+  s=s.replace(/\*\*([^*]+)\*\*/g,"<strong>$1</strong>");
+  s=s.replace(/(^|[^*])\*([^*]+)\*/g,"$1<em>$2</em>");
+  const lines=s.split("\n"); let html="", list=null;
+  const closeList=()=>{if(list){html+="</"+list+">";list=null;}};
+  for(let raw of lines){
+    const line=raw.trim();
+    if(!line){closeList();continue;}
+    let m;
+    if((m=line.match(/^#{1,4}\s+(.*)/))){closeList();html+="<h3>"+m[1]+"</h3>";continue;}
+    if((m=line.match(/^[-*•]\s+(.*)/))){if(list!=="ul"){closeList();html+="<ul>";list="ul";}html+="<li>"+m[1]+"</li>";continue;}
+    if((m=line.match(/^\d+[.)]\s+(.*)/))){if(list!=="ol"){closeList();html+="<ol>";list="ol";}html+="<li>"+m[1]+"</li>";continue;}
+    closeList(); html+="<p>"+line+"</p>";
+  }
+  closeList(); return html;
+}
+
+/* ───────── coach context ───────── */
+function buildContext(){
+  let c="";
+  const active=V.goals.filter(g=>g.steps.some(s=>!s.done));
+  if(active.length){
+    c+="\nCurrent goals:\n";
+    active.slice(0,6).forEach(g=>{
+      const done=g.steps.filter(s=>s.done).length;
+      c+=`- "${g.title}"${g.why?" (why: "+g.why+")":""} — ${done}/${g.steps.length} steps done\n`;
+    });
+  }
+  if(V.journal.length){
+    c+="\nRecent reflections (titles only):\n";
+    V.journal.slice(0,4).forEach(j=>{c+=`- ${j.prompt?j.prompt:"(free write)"} [${new Date(j.date).toLocaleDateString()}]\n`;});
+  }
+  return c.trim()?("\n\nHere is some private context about "+(V.name||"them")+". Use it naturally when relevant; do not recite it back:\n"+c.trim()):"";
+}
+function coachSystem(){
+  return `You are Sage, a warm, grounded personal life coach and companion for ${V.name||"the person you're supporting"}. You help with life advice, planning, emotional support, and evidence-based coping strategies drawn from CBT, ACT, DBT, motivational interviewing, and positive psychology.
+
+Your way of being: warm, genuine, and present. Listen first and reflect back what you hear. Validate feelings before problem-solving. Be honest and kind rather than just agreeable. Ask one thoughtful question at a time when it helps. Offer concrete, small, doable next steps. Celebrate progress, however small. Keep replies focused and human — usually a few short paragraphs, not an essay, unless depth is genuinely wanted.
+
+Important boundaries: You are not a licensed therapist or doctor, and this is supportive guidance, not a substitute for professional mental health or medical care. When something is beyond coping support, gently encourage reaching out to a professional.
+
+Safety: If ${V.name||"the person"} expresses thoughts of suicide, self-harm, harming others, or being in danger, respond with calm compassion, take it seriously, and clearly and warmly encourage immediate help — in the US, call or text 988 (Suicide & Crisis Lifeline), text HOME to 741741, or call 911 in an emergency. Stay supportive and present; do not lecture.${buildContext()}`;
+}
+
+/* ───────── chat ───────── */
+function curChat(){return V.chats.find(c=>c.id===V.activeChat)||null;}
+$("#new-chat").onclick=()=>{V.activeChat=null;renderConvList();renderActiveChat();$("#chat-input").focus();};
+$("#send-btn").onclick=sendMsg;
+$("#chat-input").addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();sendMsg();}});
+$("#chat-input").addEventListener("input",e=>{e.target.style.height="auto";e.target.style.height=Math.min(e.target.scrollHeight,160)+"px";});
+
+function renderConvList(){
+  const el=$("#conv-list"); el.innerHTML="";
+  V.chats.forEach(c=>{
+    const d=document.createElement("div");
+    d.className="conv"+(c.id===V.activeChat?" active":"");
+    d.innerHTML=`<span style="overflow:hidden;text-overflow:ellipsis">${esc(c.title||"New conversation")}</span><span class="del" title="Delete">×</span>`;
+    d.querySelector("span").onclick=()=>{V.activeChat=c.id;renderConvList();renderActiveChat();};
+    d.onclick=e=>{if(e.target.classList.contains("del"))return;V.activeChat=c.id;renderConvList();renderActiveChat();};
+    d.querySelector(".del").onclick=e=>{e.stopPropagation();V.chats=V.chats.filter(x=>x.id!==c.id);if(V.activeChat===c.id)V.activeChat=null;save();renderConvList();renderActiveChat();};
+    el.appendChild(d);
+  });
+}
+function renderActiveChat(){
+  const inner=$("#msgs-inner"); const chat=curChat();
+  if(!chat||!chat.messages.length){
+    inner.innerHTML=`<div class="empty">
+      <div class="logo"><svg viewBox="0 0 24 24" fill="none"><path d="M12 3v2M12 19v2M5 12H3M21 12h-2" stroke="#fff" stroke-width="1.7" stroke-linecap="round"/><circle cx="12" cy="12" r="4" fill="#fff"/></svg></div>
+      <h3>Hi ${esc(V.name||"there")} — I'm Sage.</h3>
+      <p>This is your private space to think out loud, work through something, or just check in. Whatever's here stays between us. Where shall we start?</p>
+      <div class="starters">
+        <button class="starter">I've had a rough day</button>
+        <button class="starter">Help me think through a decision</button>
+        <button class="starter">I want to build a better habit</button>
+        <button class="starter">I'm feeling anxious right now</button>
+        <button class="starter">Help me plan my week</button>
+      </div></div>`;
+    $$(".starter",inner).forEach(b=>b.onclick=()=>{$("#chat-input").value=b.textContent;sendMsg();});
+    return;
+  }
+  inner.innerHTML="";
+  chat.messages.forEach(m=>inner.appendChild(msgEl(m.role,m.content)));
+  scrollMsgs();
+}
+function msgEl(role,content){
+  const d=document.createElement("div");
+  d.className="msg "+(role==="user"?"user":"bot");
+  const av=role==="user"?(V.name?V.name[0].toUpperCase():"Y"):"S";
+  const bub=document.createElement("div"); bub.className="bubble";
+  bub.innerHTML = role==="user"?esc(content).replace(/\n/g,"<br>"):md(content);
+  d.innerHTML=`<div class="av">${esc(av)}</div>`;
+  d.appendChild(bub);
+  return d;
+}
+function scrollMsgs(){const m=$("#msgs");m.scrollTop=m.scrollHeight;}
+
+async function sendMsg(){
+  if(streaming)return;
+  const input=$("#chat-input"); const text=input.value.trim();
+  if(!text)return;
+  if(!V.apiKey){nav("settings");toast("Add your Anthropic API key to chat with Sage.");return;}
+  let chat=curChat();
+  if(!chat){chat={id:uid(),title:text.slice(0,42),messages:[],created:Date.now()};V.chats.unshift(chat);V.activeChat=chat.id;renderConvList();}
+  input.value=""; input.style.height="auto";
+  chat.messages.push({role:"user",content:text});
+  const inner=$("#msgs-inner");
+  if(inner.querySelector(".empty"))inner.innerHTML="";
+  inner.appendChild(msgEl("user",text));
+  // bot placeholder
+  const botEl=msgEl("bot","");
+  const bub=botEl.querySelector(".bubble");
+  bub.innerHTML='<div class="typing"><span></span><span></span><span></span></div>';
+  inner.appendChild(botEl); scrollMsgs();
+  streaming=true; $("#send-btn").disabled=true;
+  const apiMsgs=chat.messages.slice(-30).map(m=>({role:m.role,content:m.content}));
+  try{
+    const full=await callClaude(apiMsgs,{system:coachSystem(),maxTokens:2048,stream:true,
+      onText:t=>{bub.innerHTML=md(t);scrollMsgs();}});
+    chat.messages.push({role:"assistant",content:full});
+    bub.innerHTML=md(full);
+    await save();
+  }catch(err){
+    bub.innerHTML=`<p style="color:var(--danger)">${esc(err.message==="NO_KEY"?"Please add your API key in Settings.":err.message)}</p>`;
+    chat.messages.pop(); // remove user msg so they can retry cleanly? keep it—just don't save bot
+  }finally{
+    streaming=false;$("#send-btn").disabled=false;scrollMsgs();
+  }
+}
+
+/* ───────── goals ───────── */
+function renderGoals(){
+  const el=$("#goals-list"); el.innerHTML="";
+  if(!V.goals.length){el.innerHTML=`<div class="center-empty">No goals yet. Click <strong>New goal</strong> to name something you're working toward — Sage will help you break it down.</div>`;return;}
+  V.goals.forEach(g=>{
+    const done=g.steps.filter(s=>s.done).length, total=g.steps.length;
+    const pct=total?Math.round(done/total*100):0;
+    const card=document.createElement("div"); card.className="goal";
+    card.innerHTML=`
+      <div class="goal-top"><h3>${esc(g.title)}</h3>${pct===100?'<span class="tag">Complete 🎉</span>':`<span class="tag">${done}/${total}</span>`}</div>
+      ${g.why?`<div class="why">"${esc(g.why)}"</div>`:""}
+      <div class="prog"><i style="width:${pct}%"></i></div>
+      <div class="steps"></div>
+      <div class="goal-actions">
+        <button class="btn btn-ghost btn-sm act-ask">Talk to Sage about this</button>
+        <button class="btn btn-ghost btn-sm act-add">+ Add step</button>
+        <button class="btn btn-ghost btn-sm act-del" style="color:var(--danger);border-color:#e7c6bd;margin-left:auto">Delete</button>
+      </div>`;
+    const steps=card.querySelector(".steps");
+    g.steps.forEach((s,i)=>{
+      const st=document.createElement("div"); st.className="step"+(s.done?" done":"");
+      st.innerHTML=`<div class="chk"><svg viewBox="0 0 24 24" fill="none"><path d="M5 12l5 5 9-10" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="step-body"><div class="t">${esc(s.title)}</div>${s.detail?`<div class="d">${esc(s.detail)}</div>`:""}</div>`;
+      st.querySelector(".chk").onclick=()=>{s.done=!s.done;save();renderGoals();};
+      steps.appendChild(st);
+    });
+    card.querySelector(".act-del").onclick=()=>{if(confirm("Delete this goal?")){V.goals=V.goals.filter(x=>x.id!==g.id);save();renderGoals();}};
+    card.querySelector(".act-add").onclick=()=>addStep(g);
+    card.querySelector(".act-ask").onclick=()=>{
+      V.activeChat=null;renderConvList();renderActiveChat();nav("coach");
+      $("#chat-input").value=`I'd like to talk about my goal: "${g.title}". `;$("#chat-input").focus();
+    };
+    el.appendChild(card);
+  });
+}
+function addStep(g){
+  modal(`<h2>Add a step</h2>
+    <div class="field"><label>Step</label><input id="m-st" type="text" placeholder="e.g. Walk for 10 minutes"></div>
+    <div class="field"><label>Detail (optional)</label><input id="m-sd" type="text" placeholder="A note to your future self"></div>
+    <div class="modal-foot"><button class="btn btn-ghost" id="m-cancel">Cancel</button><button class="btn" id="m-ok">Add</button></div>`);
+  $("#m-st").focus();
+  $("#m-cancel").onclick=closeModal;
+  $("#m-ok").onclick=()=>{const t=$("#m-st").value.trim();if(!t)return;g.steps.push({title:t,detail:$("#m-sd").value.trim(),done:false});save();closeModal();renderGoals();};
+}
+$("#add-goal").onclick=()=>{
+  modal(`<h2>What are you working toward?</h2>
+    <div class="field"><label>Your goal</label><input id="m-title" type="text" placeholder="e.g. Feel calmer in the mornings"></div>
+    <div class="field"><label>Why it matters to you (optional)</label><textarea id="m-why" rows="2" placeholder="The deeper reason behind it"></textarea></div>
+    <div class="err" id="m-err"></div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" id="m-cancel">Cancel</button>
+      <button class="btn btn-ghost" id="m-blank">Add empty</button>
+      <button class="btn" id="m-ai">✨ Help me plan it</button>
+    </div>`);
+  $("#m-title").focus();
+  $("#m-cancel").onclick=closeModal;
+  $("#m-blank").onclick=()=>{const t=$("#m-title").value.trim();if(!t){$("#m-err").textContent="Please name your goal.";return;}V.goals.unshift({id:uid(),title:t,why:$("#m-why").value.trim(),steps:[],created:Date.now()});save();closeModal();renderGoals();};
+  $("#m-ai").onclick=async()=>{
+    const t=$("#m-title").value.trim(); const why=$("#m-why").value.trim();
+    if(!t){$("#m-err").textContent="Please name your goal.";return;}
+    if(!V.apiKey){$("#m-err").textContent="Add your API key in Settings to use AI planning.";return;}
+    const btn=$("#m-ai");btn.disabled=true;btn.textContent="Thinking…";$("#m-err").textContent="";
+    try{
+      const schema={type:"object",additionalProperties:false,required:["steps"],properties:{steps:{type:"array",items:{type:"object",additionalProperties:false,required:["title","detail"],properties:{title:{type:"string"},detail:{type:"string"}}}}}};
+      const out=await callClaude(
+        [{role:"user",content:`Break this personal goal into 4-6 small, concrete, encouraging steps. Each step: a short actionable title and a one-sentence supportive detail. Goal: "${t}"${why?`\nWhy it matters: ${why}`:""}`}],
+        {system:"You are a supportive, practical life coach. Make steps realistic, kind, and achievable. Start small.",maxTokens:1200,outputSchema:schema}
+      );
+      const data=JSON.parse(out);
+      const steps=(data.steps||[]).map(s=>({title:s.title,detail:s.detail,done:false}));
+      V.goals.unshift({id:uid(),title:t,why,steps,created:Date.now()});
+      await save();closeModal();renderGoals();
+    }catch(err){$("#m-err").textContent=err.message==="NO_KEY"?"Add your API key first.":err.message;btn.disabled=false;btn.textContent="✨ Help me plan it";}
+  };
+};
+
+/* ───────── tools ───────── */
+$$(".tool-card").forEach(c=>c.onclick=()=>openTool(c.dataset.tool));
+function openTool(t){
+  if(t==="breathe")return breatheTool();
+  if(t==="ground")return groundTool();
+  if(t==="reframe")return reframeTool();
+  if(t==="prompt")return promptTool();
+}
+let breatheTimer=null;
+function breatheTool(){
+  modal(`<h2>Box Breathing</h2><p class="muted" style="margin-bottom:6px">Breathe with the orb. In for 4, hold 4, out 4, hold 4.</p>
+    <div class="breathe-stage"><div class="orb" id="orb"><span class="orb-label" id="orb-l">Ready?</span></div><div class="breathe-count" id="orb-c">Press start when you're ready.</div></div>
+    <div class="modal-foot"><button class="btn btn-ghost" id="m-close">Close</button><button class="btn" id="orb-go">Start</button></div>`);
+  $("#m-close").onclick=()=>{clearInterval(breatheTimer);closeModal();};
+  const phases=[["Breathe in","in"],["Hold","in"],["Breathe out","out"],["Hold","out"]];
+  let idx=-1, cycles=0;
+  $("#orb-go").onclick=function(){
+    if(breatheTimer){clearInterval(breatheTimer);breatheTimer=null;this.textContent="Start";$("#orb").className="orb";$("#orb-l").textContent="Paused";return;}
+    this.textContent="Pause";
+    const step=()=>{idx=(idx+1)%4;const[label,cls]=phases[idx];const orb=$("#orb");orb.className="orb "+cls;$("#orb-l").textContent=label;if(idx===0)cycles++;$("#orb-c").textContent=`Round ${cycles} · ${4}s ${label.toLowerCase()}`;};
+    step(); breatheTimer=setInterval(step,4000);
+  };
+}
+function groundTool(){
+  const senses=[["5","things you can see","Look around and name five."],["4","things you can feel","Notice texture, temperature, weight."],["3","things you can hear","Listen near and far."],["2","things you can smell","Or two scents you like."],["1","thing you can taste","Or one slow, kind breath."]];
+  modal(`<h2>5-4-3-2-1 Grounding</h2><p class="muted" style="margin-bottom:14px">Move through your senses, slowly. There's no rush.</p>
+    <div id="ground-steps"></div>
+    <div class="modal-foot"><button class="btn btn-ghost" id="m-close">Close</button><button class="btn" id="g-save">Save to journal</button></div>`);
+  const cont=$("#ground-steps");
+  senses.forEach(([n,t,h])=>{const d=document.createElement("div");d.className="ground-step";d.innerHTML=`<div class="n">${n} ${t}</div><h4>${h}</h4><textarea rows="2" placeholder="Type what you notice…"></textarea>`;cont.appendChild(d);});
+  $("#m-close").onclick=closeModal;
+  $("#g-save").onclick=()=>{
+    let txt="";$$("#ground-steps .ground-step").forEach((d,i)=>{const v=d.querySelector("textarea").value.trim();if(v)txt+=`${senses[i][0]} ${senses[i][1]}: ${v}\n`;});
+    if(txt.trim()){V.journal.unshift({id:uid(),date:Date.now(),prompt:"5-4-3-2-1 Grounding",text:txt.trim()});save();}
+    closeModal();toast("Saved to your journal.");
+  };
+}
+function reframeTool(){
+  modal(`<h2>Reframe a Thought</h2><p class="muted" style="margin-bottom:12px">Name the situation and the thought weighing on you. Sage will help you look at it gently.</p>
+    <div class="field"><label>What happened?</label><textarea id="r-sit" rows="2" placeholder="The situation, briefly"></textarea></div>
+    <div class="field"><label>The thought</label><textarea id="r-th" rows="2" placeholder="e.g. I always mess things up"></textarea></div>
+    <div class="err" id="r-err"></div>
+    <div id="r-out-wrap" style="display:none"><label style="font-size:13px;font-weight:600;color:var(--ink2)">A kinder perspective</label><div class="out tool-panel" id="r-out"></div></div>
+    <div class="modal-foot"><button class="btn btn-ghost" id="m-close">Close</button><button class="btn" id="r-save" style="display:none">Save to journal</button><button class="btn" id="r-go">✨ Reframe</button></div>`);
+  $("#m-close").onclick=closeModal;
+  $("#r-go").onclick=async()=>{
+    const sit=$("#r-sit").value.trim(), th=$("#r-th").value.trim();
+    if(!th){$("#r-err").textContent="Share the thought you'd like to look at.";return;}
+    if(!V.apiKey){$("#r-err").textContent="Add your API key in Settings first.";return;}
+    $("#r-err").textContent="";const btn=$("#r-go");btn.disabled=true;btn.textContent="Thinking…";
+    $("#r-out-wrap").style.display="block";const out=$("#r-out");out.innerHTML='<div class="typing"><span></span><span></span><span></span></div>';
+    try{
+      const full=await callClaude(
+        [{role:"user",content:`Situation: ${sit||"(not specified)"}\nAutomatic thought: "${th}"\n\nHelp me reframe this using a warm, CBT-informed approach.`}],
+        {system:`You are Sage, a warm coach using CBT. Validate the feeling first. Gently name any cognitive distortion if present (without jargon-dumping). Offer 1-2 more balanced, compassionate alternative thoughts, and one small grounding question or action. Keep it short, kind, and human — a few short paragraphs. Address ${V.name||"the person"} warmly.`,maxTokens:900,stream:true,onText:t=>{out.innerHTML=md(t);}}
+      );
+      out.innerHTML=md(full);
+      $("#r-save").style.display="inline-flex";
+      $("#r-save").onclick=()=>{V.journal.unshift({id:uid(),date:Date.now(),prompt:`Reframe: ${th}`,text:(sit?"Situation: "+sit+"\n\n":"")+"Thought: "+th+"\n\nReframe:\n"+full});save();closeModal();toast("Saved to your journal.");};
+    }catch(err){out.innerHTML=`<p style="color:var(--danger)">${esc(err.message)}</p>`;}
+    finally{btn.disabled=false;btn.textContent="✨ Reframe again";}
+  };
+}
+async function promptTool(){
+  modal(`<h2>Journaling Prompt</h2><p class="muted" style="margin-bottom:12px">A fresh prompt to reflect on.</p>
+    <div class="out tool-panel" id="p-prompt" style="font-family:'Fraunces',serif;font-size:17px;color:var(--accent-d)"><div class="typing"><span></span><span></span><span></span></div></div>
+    <div class="field" style="margin-top:14px"><label>Your reflection</label><textarea id="p-text" rows="6" placeholder="Write freely…"></textarea></div>
+    <div class="err" id="p-err"></div>
+    <div class="modal-foot"><button class="btn btn-ghost" id="m-close">Close</button><button class="btn btn-ghost" id="p-new">New prompt</button><button class="btn" id="p-save">Save entry</button></div>`);
+  $("#m-close").onclick=closeModal;
+  $("#p-new").onclick=loadPrompt;
+  let current="";
+  async function loadPrompt(){
+    const pe=$("#p-prompt");pe.innerHTML='<div class="typing"><span></span><span></span><span></span></div>';
+    if(!V.apiKey){pe.textContent="Take a moment: what's one thing, however small, that went okay today — and what does it tell you about yourself?";current=pe.textContent;return;}
+    try{
+      current=await callClaude([{role:"user",content:"Give me one short, warm, original journaling prompt for self-reflection (a single sentence question). Vary the theme — gratitude, growth, self-compassion, values, or hopes. Just the prompt, no preamble."}],{system:"You write gentle, thoughtful journaling prompts.",maxTokens:120});
+      pe.textContent=current.replace(/^["']|["']$/g,"");
+    }catch(err){pe.textContent="What do you most need to hear right now — and can you offer it to yourself?";current=pe.textContent;}
+  }
+  $("#p-save").onclick=()=>{const tx=$("#p-text").value.trim();if(!tx){$("#p-err").textContent="Write something first, even a sentence.";return;}V.journal.unshift({id:uid(),date:Date.now(),prompt:current,text:tx});save();closeModal();toast("Saved to your journal.");};
+  loadPrompt();
+}
+
+/* ───────── journal ───────── */
+$("#add-journal").onclick=()=>{
+  modal(`<h2>Free write</h2>
+    <div class="field"><label>Title (optional)</label><input id="j-title" type="text" placeholder="A few words"></div>
+    <div class="field"><label>Your entry</label><textarea id="j-text" rows="8" placeholder="Whatever's on your mind…"></textarea></div>
+    <div class="modal-foot"><button class="btn btn-ghost" id="m-close">Cancel</button><button class="btn" id="j-save">Save</button></div>`);
+  $("#j-text").focus();$("#m-close").onclick=closeModal;
+  $("#j-save").onclick=()=>{const tx=$("#j-text").value.trim();if(!tx)return;V.journal.unshift({id:uid(),date:Date.now(),prompt:$("#j-title").value.trim(),text:tx});save();closeModal();renderJournal();};
+};
+function renderJournal(){
+  const el=$("#journal-list");el.innerHTML="";
+  if(!V.journal.length){el.innerHTML=`<div class="center-empty">Your journal is empty. Reflections from the coping tools and your free writes will gather here.</div>`;return;}
+  V.journal.forEach(j=>{
+    const d=document.createElement("div");d.className="journal-entry";
+    d.innerHTML=`<div class="meta"><span>${new Date(j.date).toLocaleDateString(undefined,{weekday:"short",month:"short",day:"numeric",year:"numeric"})} · ${new Date(j.date).toLocaleTimeString([],{hour:"numeric",minute:"2-digit"})}</span><button class="del-j" style="color:#c0b8a8;font-size:18px;line-height:1">×</button></div>${j.prompt?`<div class="pr">${esc(j.prompt)}</div>`:""}<div class="tx">${esc(j.text)}</div>`;
+    d.querySelector(".del-j").onclick=()=>{if(confirm("Delete this entry?")){V.journal=V.journal.filter(x=>x.id!==j.id);save();renderJournal();}};
+    el.appendChild(d);
+  });
+}
+
+/* ───────── settings ───────── */
+function refreshKeyStatus(){
+  const s=$("#key-status");
+  s.innerHTML=V.apiKey?`<span style="color:var(--accent-d);font-weight:600">● Connected (…${esc(V.apiKey.slice(-4))})</span>`:`<span style="color:var(--warm);font-weight:600">○ Not set</span>`;
+}
+$("#save-name").onclick=()=>{V.name=$("#set-name").value.trim();save();toast("Saved.");};
+$("#save-key").onclick=()=>{const k=$("#set-key").value.trim();if(!k)return;V.apiKey=k;$("#set-key").value="";save();refreshKeyStatus();toast("API key saved.");};
+$("#save-pass").onclick=async()=>{
+  const cur=$("#set-pass-cur").value, nw=$("#set-pass-new").value;const e=$("#pass-err");e.textContent="";
+  if(nw.length<6){e.textContent="New passphrase must be at least 6 characters.";return;}
+  try{ await deriveKey(cur,SALT).then(k=>decryptObj(localStorage.getItem(LS_VAULT),k)); }
+  catch(_){e.textContent="Current passphrase is incorrect.";return;}
+  SALT=crypto.getRandomValues(new Uint8Array(16));localStorage.setItem(LS_SALT,b64(SALT));
+  KEY=await deriveKey(nw,SALT);await save();
+  $("#set-pass-cur").value="";$("#set-pass-new").value="";toast("Passphrase changed.");
+};
+$("#export-btn").onclick=()=>{
+  const blob=new Blob([JSON.stringify({salt:localStorage.getItem(LS_SALT),vault:localStorage.getItem(LS_VAULT),app:"lumen",v:1})],{type:"application/json"});
+  const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="lumen-backup-"+new Date().toISOString().slice(0,10)+".lumen";a.click();
+  URL.revokeObjectURL(a.href);toast("Backup downloaded.");
+};
+$("#import-file").onchange=e=>{
+  const f=e.target.files[0];if(!f)return;
+  const r=new FileReader();
+  r.onload=()=>{
+    try{const d=JSON.parse(r.result);if(!d.salt||!d.vault)throw 0;
+      if(!confirm("Importing will replace the data on this device with the backup. The backup's passphrase will be required to unlock. Continue?"))return;
+      localStorage.setItem(LS_SALT,d.salt);localStorage.setItem(LS_VAULT,d.vault);
+      toast("Backup imported. Reloading…");setTimeout(()=>location.reload(),800);
+    }catch(_){toast("That doesn't look like a valid Lumen backup.");}
+  };
+  r.readAsText(f);e.target.value="";
+};
+$("#wipe-btn").onclick=()=>{
+  if(!confirm("This permanently erases ALL your data on this device — chats, goals, journal, key. This cannot be undone. Are you sure?"))return;
+  if(!confirm("Really sure? There is no recovery."))return;
+  localStorage.removeItem(LS_SALT);localStorage.removeItem(LS_VAULT);location.reload();
+};
+
+/* ───────── modal + toast ───────── */
+function modal(html){$("#modal").innerHTML=html;$("#modal-bg").classList.add("show");}
+function closeModal(){$("#modal-bg").classList.remove("show");$("#modal").innerHTML="";if(breatheTimer){clearInterval(breatheTimer);breatheTimer=null;}}
+$("#modal-bg").onclick=e=>{if(e.target===$("#modal-bg"))closeModal();};
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&$("#modal-bg").classList.contains("show"))closeModal();});
+let toastT=null;
+function toast(msg){
+  let t=$("#toast");
+  if(!t){t=document.createElement("div");t.id="toast";t.style.cssText="position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;padding:11px 20px;border-radius:10px;font-size:14px;z-index:100;box-shadow:0 8px 24px rgba(0,0,0,.2);transition:opacity .2s;";document.body.appendChild(t);}
+  t.textContent=msg;t.style.opacity="1";clearInterval(toastT);toastT=setTimeout(()=>t.style.opacity="0",2400);
+}
+
+/* ───────── boot ───────── */
+showAuthMode();
+</script>
+</body>
+</html>
