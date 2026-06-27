@@ -5,6 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="color-scheme" content="light">
 <title>Lumen — Your Personal Coach</title>
+<meta name="theme-color" content="#5b8a72">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Lumen">
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,500&family=Inter:wght@400;500;600;700&display=swap');
 :root{
@@ -189,6 +195,54 @@ textarea{resize:vertical;}
 .banner{background:var(--warm-soft);border:1px solid #ecd5c1;border-radius:10px;padding:10px 14px;font-size:13px;color:#8a4a2c;margin-bottom:16px;display:flex;gap:9px;align-items:center;}
 .banner button{margin-left:auto;color:#8a4a2c;font-weight:600;font-size:13px;text-decoration:underline;flex-shrink:0;}
 
+/* quit smoking */
+.quit-hero{background:linear-gradient(135deg,var(--accent-d),var(--accent));color:#fff;border-radius:18px;padding:24px;text-align:center;box-shadow:var(--shadow);margin-bottom:16px;}
+.quit-hero .lab{font-size:12px;text-transform:uppercase;letter-spacing:.08em;opacity:.85;}
+.quit-hero .big{font-family:'Fraunces',serif;font-size:34px;font-weight:600;margin:6px 0 2px;line-height:1.1;}
+.quit-hero .sub{font-size:13px;opacity:.9;}
+.quit-stats{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;}
+.qstat{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;box-shadow:var(--shadow);}
+.qstat .v{font-family:'Fraunces',serif;font-size:24px;color:var(--accent-d);}
+.qstat .l{font-size:12.5px;color:var(--ink2);margin-top:2px;}
+.sos{width:100%;background:linear-gradient(135deg,var(--warm),#b86b3f);color:#fff;border-radius:16px;padding:18px;font-size:18px;font-weight:700;font-family:'Fraunces',serif;box-shadow:0 6px 20px rgba(201,138,94,.35);margin-bottom:16px;transition:.15s;display:flex;align-items:center;justify-content:center;gap:10px;}
+.sos:hover{transform:translateY(-2px);}
+.sos svg{width:22px;height:22px;}
+.mile{display:flex;gap:12px;align-items:flex-start;padding:11px 8px;border-radius:10px;}
+.mile .dot{width:22px;height:22px;border-radius:50%;border:2px solid var(--line2);flex-shrink:0;display:flex;align-items:center;justify-content:center;margin-top:1px;}
+.mile.hit .dot{background:var(--accent);border-color:var(--accent);}
+.mile .dot svg{width:13px;height:13px;color:#fff;opacity:0;}
+.mile.hit .dot svg{opacity:1;}
+.mile .mt{font-size:14.5px;font-weight:600;}
+.mile.hit .mt{color:var(--accent-d);}
+.mile .md{font-size:13px;color:var(--ink2);line-height:1.45;}
+.mile .when{font-size:11.5px;color:var(--ink2);margin-left:auto;white-space:nowrap;flex-shrink:0;}
+.chips{display:flex;flex-wrap:wrap;gap:7px;margin:4px 0 8px;}
+.chip-b{background:var(--bg2);border:1px solid var(--line2);border-radius:18px;padding:7px 13px;font-size:13px;color:var(--ink2);transition:.12s;}
+.chip-b:hover{border-color:var(--accent);}
+.chip-b.sel{background:var(--accent-soft);border-color:var(--accent);color:var(--accent-d);font-weight:600;}
+.surf-ring{width:150px;height:150px;border-radius:50%;background:radial-gradient(circle at 35% 30%,var(--warm-soft),var(--warm));display:flex;flex-direction:column;align-items:center;justify-content:center;margin:8px auto 14px;color:#fff;box-shadow:0 0 40px rgba(201,138,94,.3);animation:pulse 4s ease-in-out infinite;}
+@keyframes pulse{0%,100%{transform:scale(1);}50%{transform:scale(1.06);}}
+.surf-ring .tm{font-family:'Fraunces',serif;font-size:30px;}
+.surf-ring .tl{font-size:11px;opacity:.9;text-transform:uppercase;letter-spacing:.06em;}
+/* mood */
+.mood-faces{display:flex;justify-content:space-between;gap:6px;margin:6px 0 4px;}
+.mface{flex:1;background:var(--bg2);border:1px solid var(--line2);border-radius:12px;padding:10px 4px;text-align:center;cursor:pointer;transition:.12s;font-size:24px;}
+.mface .ml{display:block;font-size:11px;color:var(--ink2);margin-top:3px;}
+.mface:hover{border-color:var(--accent);}
+.mface.sel{background:var(--accent-soft);border-color:var(--accent);}
+.escale{display:flex;gap:6px;}
+.edot{flex:1;height:34px;border:1px solid var(--line2);border-radius:9px;background:var(--bg2);cursor:pointer;font-size:13px;color:var(--ink2);transition:.12s;}
+.edot:hover{border-color:var(--accent);}
+.edot.sel{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:600;}
+.trend{display:flex;align-items:flex-end;gap:4px;height:80px;margin:8px 0;}
+.trend .bar{flex:1;border-radius:4px 4px 0 0;background:var(--accent);min-height:4px;opacity:.85;}
+.trend .bar.e{background:var(--lav);}
+.mic{width:34px;height:34px;border-radius:9px;border:1px solid var(--line2);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--ink2);background:var(--card);transition:.12s;}
+.mic:hover{border-color:var(--accent);color:var(--accent-d);}
+.mic.rec{background:var(--danger);border-color:var(--danger);color:#fff;animation:recp 1.2s infinite;}
+@keyframes recp{50%{opacity:.6;}}
+.mic svg{width:17px;height:17px;}
+
 @media(max-width:780px){
   .side{position:fixed;left:0;top:0;z-index:40;transform:translateX(-100%);transition:.25s;box-shadow:0 0 40px rgba(0,0,0,.15);}
   .side.open{transform:translateX(0);}
@@ -263,6 +317,8 @@ textarea{resize:vertical;}
       <nav class="nav" id="nav">
         <button class="nav-item active" data-v="coach"><svg viewBox="0 0 24 24" fill="none"><path d="M21 11.5a8.38 8.38 0 01-9 8.4 8.5 8.5 0 01-3.8-.9L3 21l1.9-5.7A8.38 8.38 0 0121 11.5z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>Coach</button>
         <button class="nav-item" data-v="goals"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.7"/><circle cx="12" cy="12" r="5" stroke="currentColor" stroke-width="1.7"/><circle cx="12" cy="12" r="1.4" fill="currentColor"/></svg>Goals & Plans</button>
+        <button class="nav-item" data-v="quit"><svg viewBox="0 0 24 24" fill="none"><path d="M3 14h13a3 3 0 000-6M16 14v3M19 14v3M3 17h13M18 8c0-2 1.5-2.5 1.5-4M21 9c.6-1 .5-2-.5-3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Quit Smoking</button>
+        <button class="nav-item" data-v="mood"><svg viewBox="0 0 24 24" fill="none"><path d="M4 18l4-5 3 3 4-6 5 7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><circle cx="8" cy="6" r="1.5" fill="currentColor"/></svg>Mood</button>
         <button class="nav-item" data-v="tools"><svg viewBox="0 0 24 24" fill="none"><path d="M12 21c4.97 0 9-3.5 9-8 0-3-2-5.5-4.5-5.5-1.5 0-2.5 1-3 2-.5-1.5-2-3.5-4.5-3.5C6 6 4 8.5 4 11.5 4 16 7.5 21 12 21z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>Coping Tools</button>
         <button class="nav-item" data-v="journal"><svg viewBox="0 0 24 24" fill="none"><path d="M5 4h11l3 3v13H5z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M9 9h6M9 13h6M9 17h3" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>Journal</button>
         <button class="nav-item" data-v="settings"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.7"/><path d="M19 12a7 7 0 00-.1-1.2l2-1.5-2-3.4-2.3 1a7 7 0 00-2-1.2l-.4-2.5H8.8l-.4 2.5a7 7 0 00-2 1.2l-2.3-1-2 3.4 2 1.5A7 7 0 005 12c0 .4 0 .8.1 1.2l-2 1.5 2 3.4 2.3-1a7 7 0 002 1.2l.4 2.5h4.4l.4-2.5a7 7 0 002-1.2l2.3 1 2-3.4-2-1.5c.1-.4.1-.8.1-1.2z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>Settings</button>
@@ -306,6 +362,22 @@ textarea{resize:vertical;}
             <button class="btn" id="add-goal">+ New goal</button>
           </div>
           <div id="goals-list"></div>
+        </div>
+      </section>
+
+      <!-- QUIT SMOKING -->
+      <section class="view" id="v-quit">
+        <div class="view-pad">
+          <div class="view-head"><h2>Quit Smoking</h2><p>One craving, one choice at a time. You've got this.</p></div>
+          <div id="quit-body"></div>
+        </div>
+      </section>
+
+      <!-- MOOD -->
+      <section class="view" id="v-mood">
+        <div class="view-pad">
+          <div class="view-head"><h2>Mood Check-in</h2><p>A quick note to yourself about how today feels.</p></div>
+          <div id="mood-body"></div>
         </div>
       </section>
 
@@ -424,8 +496,9 @@ async function getDeviceKey(){let k=await idb("readonly","deviceKey");if(!k){k=a
 
 /* ───────── state ───────── */
 let KEY=null, SALT=null, DEVICE=false;
-let V={name:"",apiKey:"",chats:[],goals:[],journal:[],activeChat:null};
+let V={name:"",apiKey:"",chats:[],goals:[],journal:[],moods:[],quit:null,activeChat:null};
 let streaming=false;
+function normV(){V.chats=V.chats||[];V.goals=V.goals||[];V.journal=V.journal||[];V.moods=V.moods||[];if(!("quit" in V))V.quit=null;}
 const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,7);
 
 async function save(){
@@ -469,6 +542,7 @@ async function unlock(){
   }catch(err){ e.textContent="Incorrect passphrase. Try again."; KEY=null; }
 }
 function enterApp(){
+  normV();
   $("#auth").style.display="none";
   $("#app").style.display="block";
   $("#set-name").value=V.name;
@@ -482,13 +556,17 @@ function enterApp(){
 
 /* ───────── navigation ───────── */
 $$("#nav .nav-item").forEach(b=>b.onclick=()=>nav(b.dataset.v));
+let quitTicker=null;
 function nav(v){
   $$("#nav .nav-item").forEach(x=>x.classList.toggle("active",x.dataset.v===v));
   $$(".view").forEach(x=>x.classList.remove("active"));
   $("#v-"+v).classList.add("active");
   $("#top-title").textContent=$(`[data-v="${v}"]`).textContent.trim();
+  clearInterval(quitTicker); quitTicker=null;
   if(v==="goals")renderGoals();
   if(v==="journal")renderJournal();
+  if(v==="quit")renderQuit();
+  if(v==="mood")renderMood();
   if(v==="settings")refreshKeyStatus();
   closeSide();
 }
@@ -574,6 +652,18 @@ function buildContext(){
       c+=`- "${g.title}"${g.why?" (why: "+g.why+")":""} — ${done}/${g.steps.length} steps done\n`;
     });
   }
+  if(V.quit){
+    const since=quitSince(), days=Math.floor((Date.now()-since)/864e5);
+    const week=V.quit.cravings.filter(cv=>Date.now()-cv.ts<7*864e5);
+    c+=`\nQuitting smoking: smoke-free for ${days} day(s) (since ${new Date(since).toLocaleDateString()}). ${V.quit.cravings.length} craving(s) logged total, ${week.length} in the last week.`;
+    if(V.quit.reasons)c+=` Their reasons: ${V.quit.reasons}.`;
+    c+="\n";
+  }
+  if(V.moods.length){
+    const recent=V.moods.slice(0,7);
+    const avg=(recent.reduce((s,m)=>s+m.mood,0)/recent.length).toFixed(1);
+    c+=`\nMood: averaging ${avg}/5 over the last ${recent.length} check-in(s); most recent ${recent[0].mood}/5${recent[0].note?` ("${recent[0].note}")`:""}.\n`;
+  }
   if(V.journal.length){
     c+="\nRecent reflections (titles only):\n";
     V.journal.slice(0,4).forEach(j=>{c+=`- ${j.prompt?j.prompt:"(free write)"} [${new Date(j.date).toLocaleDateString()}]\n`;});
@@ -644,6 +734,7 @@ function scrollMsgs(){const m=$("#msgs");m.scrollTop=m.scrollHeight;}
 
 async function sendMsg(){
   if(streaming)return;
+  if(recog){try{recog.stop();}catch(_){}}
   const input=$("#chat-input"); const text=input.value.trim();
   if(!text)return;
   if(!V.apiKey){nav("settings");toast("Add your Anthropic API key to chat with Sage.");return;}
@@ -832,6 +923,7 @@ async function promptTool(){
     }catch(err){pe.textContent="What do you most need to hear right now — and can you offer it to yourself?";current=pe.textContent;}
   }
   $("#p-save").onclick=()=>{const tx=$("#p-text").value.trim();if(!tx){$("#p-err").textContent="Write something first, even a sentence.";return;}V.journal.unshift({id:uid(),date:Date.now(),prompt:current,text:tx});save();closeModal();toast("Saved to your journal.");};
+  addDictateFoot("#p-text",".modal-foot");
   loadPrompt();
 }
 
@@ -841,7 +933,7 @@ $("#add-journal").onclick=()=>{
     <div class="field"><label>Title (optional)</label><input id="j-title" type="text" placeholder="A few words"></div>
     <div class="field"><label>Your entry</label><textarea id="j-text" rows="8" placeholder="Whatever's on your mind…"></textarea></div>
     <div class="modal-foot"><button class="btn btn-ghost" id="m-close">Cancel</button><button class="btn" id="j-save">Save</button></div>`);
-  $("#j-text").focus();$("#m-close").onclick=closeModal;
+  $("#j-text").focus();$("#m-close").onclick=closeModal;addDictateFoot("#j-text",".modal-foot");
   $("#j-save").onclick=()=>{const tx=$("#j-text").value.trim();if(!tx)return;V.journal.unshift({id:uid(),date:Date.now(),prompt:$("#j-title").value.trim(),text:tx});save();closeModal();renderJournal();};
 };
 function renderJournal(){
@@ -853,6 +945,236 @@ function renderJournal(){
     d.querySelector(".del-j").onclick=()=>{if(confirm("Delete this entry?")){V.journal=V.journal.filter(x=>x.id!==j.id);save();renderJournal();}};
     el.appendChild(d);
   });
+}
+
+/* ───────── quit smoking ───────── */
+let sosTimer=null;
+const QMILES=[
+ [20*6e4,"20 minutes","Heart rate and blood pressure start to drop."],
+ [12*36e5,"12 hours","Carbon monoxide in your blood returns to normal."],
+ [24*36e5,"1 day","Your risk of heart attack begins to fall."],
+ [48*36e5,"2 days","Nerve endings regrow — smell and taste sharpen."],
+ [72*36e5,"3 days","Breathing feels easier and energy rises."],
+ [14*864e5,"2 weeks","Circulation improves; your lungs work better."],
+ [30*864e5,"1 month","Coughing and shortness of breath ease."],
+ [90*864e5,"3 months","Circulation and lung function are markedly better."],
+ [274*864e5,"9 months","Lungs heal; far fewer infections."],
+ [365*864e5,"1 year","Heart-disease risk is half that of a smoker."]
+];
+function quitSince(){
+  if(!V.quit)return Date.now();
+  let t=V.quit.date;
+  V.quit.cravings.forEach(cv=>{if(cv.outcome==="smoked"&&cv.ts>t)t=cv.ts;});
+  (V.quit.slips||[]).forEach(s=>{if(s>t)t=s;});
+  return t;
+}
+function fmtDur(ms){
+  if(ms<0)ms=0;
+  const d=Math.floor(ms/864e5),h=Math.floor(ms%864e5/36e5),m=Math.floor(ms%36e5/6e4);
+  if(d>0)return d+"d "+h+"h "+m+"m";
+  if(h>0)return h+"h "+m+"m";
+  return m+"m";
+}
+function renderQuit(){
+  const el=$("#quit-body");
+  if(!V.quit){
+    el.innerHTML=`<div class="card">
+      <h3>Start your quit journey</h3>
+      <p class="muted" style="margin:4px 0 14px">A few details so Lumen can cheer you on with real numbers.</p>
+      <div class="field"><label>Quit date & time</label><input id="q-date" type="datetime-local"></div>
+      <div class="field"><label>Cigarettes a day (before quitting)</label><input id="q-perday" type="number" min="1" placeholder="e.g. 15"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div class="field"><label>Cigarettes per pack</label><input id="q-perpack" type="number" min="1" value="20"></div>
+        <div class="field"><label>Cost per pack</label><input id="q-cost" type="number" min="0" step="0.01" placeholder="e.g. 12"></div>
+      </div>
+      <div class="field"><label>Your reasons (optional)</label><textarea id="q-why" rows="2" placeholder="Why this matters to you"></textarea></div>
+      <div class="err" id="q-err"></div>
+      <button class="btn" id="q-start">Begin</button>
+    </div>`;
+    $("#q-date").value=new Date(Date.now()-new Date().getTimezoneOffset()*6e4).toISOString().slice(0,16);
+    $("#q-start").onclick=()=>{
+      const perDay=+$("#q-perday").value, perPack=+$("#q-perpack").value||20, cost=+$("#q-cost").value, dval=$("#q-date").value;
+      if(!perDay){$("#q-err").textContent="Enter how many you used to smoke a day.";return;}
+      V.quit={date:dval?new Date(dval).getTime():Date.now(),perDay,perPack,costPerPack:cost||0,reasons:$("#q-why").value.trim(),cravings:[],slips:[]};
+      save();renderQuit();
+    };
+    return;
+  }
+  const q=V.quit, since=quitSince(), elapsed=Date.now()-since;
+  const cigsAvoided=Math.max(0,Math.floor(q.perDay*elapsed/864e5));
+  const saved=q.costPerPack?(cigsAvoided/q.perPack*q.costPerPack):0;
+  const cravBeat=q.cravings.filter(c=>c.outcome==="beat").length;
+  el.innerHTML=`
+    <div class="quit-hero">
+      <div class="lab">Smoke-free for</div>
+      <div class="big" id="q-clock">${fmtDur(elapsed)}</div>
+      <div class="sub">since ${new Date(since).toLocaleDateString(undefined,{month:"short",day:"numeric",year:"numeric"})}</div>
+    </div>
+    <button class="sos" id="q-sos"><svg viewBox="0 0 24 24" fill="none"><path d="M12 2l2.4 7.4H22l-6 4.5 2.3 7.1L12 16.6 5.7 21l2.3-7.1-6-4.5h7.6z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>I'm having a craving</button>
+    <div class="quit-stats">
+      <div class="qstat"><div class="v">${cigsAvoided.toLocaleString()}</div><div class="l">cigarettes not smoked</div></div>
+      <div class="qstat"><div class="v">${q.costPerPack?("$"+saved.toFixed(2)):"—"}</div><div class="l">money saved</div></div>
+      <div class="qstat"><div class="v">${cravBeat}</div><div class="l">cravings beaten</div></div>
+      <div class="qstat"><div class="v">${q.cravings.length}</div><div class="l">cravings logged</div></div>
+    </div>
+    <div class="card" style="margin-bottom:16px"><h3 style="margin-bottom:6px">Health milestones</h3><div id="q-miles"></div></div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <button class="btn btn-ghost btn-sm" id="q-slip">Log a slip</button>
+      <button class="btn btn-ghost btn-sm" id="q-edit">Edit details</button>
+      <button class="btn btn-ghost btn-sm" id="q-reset" style="color:var(--danger);border-color:#e7c6bd;margin-left:auto">Reset</button>
+    </div>`;
+  const mc=$("#q-miles");
+  QMILES.forEach(([thr,label,desc])=>{
+    const hit=elapsed>=thr, d=document.createElement("div");
+    d.className="mile"+(hit?" hit":"");
+    d.innerHTML=`<div class="dot"><svg viewBox="0 0 24 24" fill="none"><path d="M5 12l5 5 9-10" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div style="flex:1"><div class="mt">${label}</div><div class="md">${desc}</div></div>
+      ${hit?'<div class="when">✓ reached</div>':`<div class="when">in ${fmtDur(thr-elapsed)}</div>`}`;
+    mc.appendChild(d);
+  });
+  $("#q-sos").onclick=cravingSOS;
+  $("#q-slip").onclick=()=>{if(confirm("Log a slip? Your smoke-free clock restarts now — and that's okay. Every attempt teaches you something.")){q.slips=q.slips||[];q.slips.push(Date.now());save();renderQuit();toast("Logged. Be kind to yourself — keep going.");}};
+  $("#q-edit").onclick=editQuit;
+  $("#q-reset").onclick=()=>{if(confirm("Clear your quit tracker entirely? This removes your quit data.")){V.quit=null;save();renderQuit();}};
+  clearInterval(quitTicker);
+  quitTicker=setInterval(()=>{const c=$("#q-clock");if(c)c.textContent=fmtDur(Date.now()-quitSince());else clearInterval(quitTicker);},1000);
+}
+function editQuit(){
+  const q=V.quit;
+  modal(`<h2>Edit quit details</h2>
+    <div class="field"><label>Quit date & time</label><input id="eq-date" type="datetime-local"></div>
+    <div class="field"><label>Cigarettes a day</label><input id="eq-perday" type="number" min="1"></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <div class="field"><label>Per pack</label><input id="eq-perpack" type="number" min="1"></div>
+      <div class="field"><label>Cost per pack</label><input id="eq-cost" type="number" min="0" step="0.01"></div>
+    </div>
+    <div class="field"><label>Reasons</label><textarea id="eq-why" rows="2"></textarea></div>
+    <div class="modal-foot"><button class="btn btn-ghost" id="m-close">Cancel</button><button class="btn" id="eq-save">Save</button></div>`);
+  $("#eq-date").value=new Date(q.date-new Date().getTimezoneOffset()*6e4).toISOString().slice(0,16);
+  $("#eq-perday").value=q.perDay;$("#eq-perpack").value=q.perPack;$("#eq-cost").value=q.costPerPack||"";$("#eq-why").value=q.reasons||"";
+  $("#m-close").onclick=closeModal;
+  $("#eq-save").onclick=()=>{
+    if($("#eq-date").value)q.date=new Date($("#eq-date").value).getTime();
+    q.perDay=+$("#eq-perday").value||q.perDay;q.perPack=+$("#eq-perpack").value||q.perPack;q.costPerPack=+$("#eq-cost").value||0;q.reasons=$("#eq-why").value.trim();
+    save();closeModal();renderQuit();
+  };
+}
+function cravingSOS(){
+  let intensity=0, trigger="";
+  let secs=180;
+  const lines=["Cravings rise and fall like a wave — this one will pass.","You don't have to fight it. Just ride it out, breath by breath.","This feeling is temporary. You are stronger than it is.","Every craving you let pass makes the next one weaker."];
+  modal(`<h2>Riding out a craving</h2>
+    <div class="surf-ring"><div class="tm" id="sf-t">3:00</div><div class="tl">ride the wave</div></div>
+    <p class="muted" id="sf-line" style="text-align:center;margin:-4px 0 14px">${lines[0]}</p>
+    <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:14px">
+      <button class="btn btn-ghost btn-sm" id="sf-breathe">Breathe with me</button>
+      <button class="btn btn-ghost btn-sm" id="sf-why">My reasons</button>
+      <button class="btn btn-ghost btn-sm" id="sf-talk">Talk to Sage</button>
+    </div>
+    <div id="sf-ai"></div>
+    <label style="font-size:13px;font-weight:600;color:var(--ink2)">How strong is it?</label>
+    <div class="chips" id="sf-int">${[1,2,3,4,5].map(n=>`<button class="chip-b" data-i="${n}">${n}</button>`).join("")}</div>
+    <label style="font-size:13px;font-weight:600;color:var(--ink2)">What set it off?</label>
+    <div class="chips" id="sf-trig">${["Stress","After eating","Coffee","Social","Boredom","Alcohol","Habit","Other"].map(t=>`<button class="chip-b" data-t="${t}">${t}</button>`).join("")}</div>
+    <div class="modal-foot"><button class="btn btn-ghost" id="sf-smoked">I smoked</button><button class="btn" id="sf-beat">I made it through 🎉</button></div>`);
+  clearInterval(sosTimer);
+  sosTimer=setInterval(()=>{
+    secs--;const m=Math.floor(secs/60),s=((secs%60)+60)%60;
+    const t=$("#sf-t"); if(!t){clearInterval(sosTimer);return;}
+    if(secs<=0){t.textContent="✓";$("#sf-line").textContent="The wave passed. Beautifully done.";clearInterval(sosTimer);return;}
+    t.textContent=m+":"+String(s).padStart(2,"0");
+    if(secs%15===0)$("#sf-line").textContent=lines[Math.floor(secs/15)%lines.length];
+  },1000);
+  $("#sf-int").onclick=e=>{const b=e.target.closest("[data-i]");if(!b)return;intensity=+b.dataset.i;$$("#sf-int .chip-b").forEach(x=>x.classList.toggle("sel",x===b));};
+  $("#sf-trig").onclick=e=>{const b=e.target.closest("[data-t]");if(!b)return;trigger=b.dataset.t;$$("#sf-trig .chip-b").forEach(x=>x.classList.toggle("sel",x===b));};
+  $("#sf-breathe").onclick=()=>{clearInterval(sosTimer);breatheTool();};
+  $("#sf-why").onclick=()=>{const r=V.quit.reasons||"You decided to quit for your health and the people who love you. That reason still stands.";$("#sf-ai").innerHTML=`<div class="out tool-panel" style="margin-bottom:14px">${esc(r)}</div>`;};
+  $("#sf-talk").onclick=async()=>{
+    const box=$("#sf-ai");box.innerHTML=`<div class="out tool-panel" id="sf-out"><div class="typing"><span></span><span></span><span></span></div></div>`;
+    const out=$("#sf-out");
+    if(!V.apiKey){out.textContent="This craving will pass in a few minutes — they always do. Drink some water, step outside, breathe slowly. You've already made it this far. (Add an API key in Settings for a live pep-talk.)";return;}
+    try{
+      const full=await callClaude([{role:"user",content:`I'm having a cigarette craving right now${trigger?` (triggered by: ${trigger})`:""}${intensity?`, intensity ${intensity}/5`:""}. I'm trying to quit. Give me a short, warm, motivating pep-talk to ride it out — 3 to 4 sentences.`}],{system:`You are Sage, ${V.name||"the person's"} warm quit-smoking ally. Be encouraging, specific, and brief. Remind them cravings pass in minutes. No lectures, no shaming.`,maxTokens:300,stream:true,onText:t=>{out.innerHTML=md(t);}});
+      out.innerHTML=md(full);
+    }catch(e){out.innerHTML=`<p style="color:var(--danger)">${esc(e.message)}</p>`;}
+  };
+  const finish=outcome=>{clearInterval(sosTimer);V.quit.cravings.unshift({ts:Date.now(),intensity,trigger,outcome});save();closeModal();renderQuit();toast(outcome==="beat"?"You rode it out. That's a real win. 🌊":"Logged with compassion. The next choice is a fresh start.");};
+  $("#sf-beat").onclick=()=>finish("beat");
+  $("#sf-smoked").onclick=()=>finish("smoked");
+}
+
+/* ───────── mood ───────── */
+const MFACE=["","😞","😕","😐","🙂","😄"], MLAB=["","Low","Meh","Okay","Good","Great"];
+function renderMood(){
+  const el=$("#mood-body");
+  let mood=0,energy=0;
+  el.innerHTML=`
+    <div class="card" style="margin-bottom:16px">
+      <h3 style="margin-bottom:8px">How are you feeling?</h3>
+      <label style="font-size:13px;font-weight:600;color:var(--ink2)">Mood</label>
+      <div class="mood-faces" id="md-faces">${[1,2,3,4,5].map(n=>`<button class="mface" data-m="${n}">${MFACE[n]}<span class="ml">${MLAB[n]}</span></button>`).join("")}</div>
+      <label style="font-size:13px;font-weight:600;color:var(--ink2);margin-top:10px;display:block">Energy</label>
+      <div class="escale" id="md-energy">${[1,2,3,4,5].map(n=>`<button class="edot" data-e="${n}">${n}</button>`).join("")}</div>
+      <div class="field" style="margin-top:12px"><label>A note (optional)</label><input id="md-note" type="text" placeholder="What's behind it?"></div>
+      <div class="err" id="md-err"></div>
+      <button class="btn btn-sm" id="md-save">Save check-in</button>
+    </div>
+    <div class="card" style="margin-bottom:16px" id="md-trend-card"></div>
+    <div id="md-list"></div>`;
+  $("#md-faces").onclick=e=>{const b=e.target.closest("[data-m]");if(!b)return;mood=+b.dataset.m;$$("#md-faces .mface").forEach(x=>x.classList.toggle("sel",x===b));};
+  $("#md-energy").onclick=e=>{const b=e.target.closest("[data-e]");if(!b)return;energy=+b.dataset.e;$$("#md-energy .edot").forEach(x=>x.classList.toggle("sel",x===b));};
+  $("#md-save").onclick=()=>{if(!mood){$("#md-err").textContent="Pick a mood first.";return;}V.moods.unshift({date:Date.now(),mood,energy:energy||null,note:$("#md-note").value.trim()});save();renderMood();toast("Check-in saved.");};
+  const tc=$("#md-trend-card");
+  if(V.moods.length<2)tc.style.display="none";
+  else{
+    const recent=V.moods.slice(0,14).reverse();
+    const bars=recent.map(m=>`<div class="bar" style="height:${m.mood/5*100}%" title="${MFACE[m.mood]} ${new Date(m.date).toLocaleDateString()}"></div>`).join("");
+    const ebars=recent.map(m=>`<div class="bar e" style="height:${(m.energy||0)/5*100}%"></div>`).join("");
+    tc.innerHTML=`<h3 style="margin-bottom:6px">Recent trend</h3><div style="font-size:12px;color:var(--ink2)">Mood</div><div class="trend">${bars}</div><div style="font-size:12px;color:var(--ink2);margin-top:4px">Energy</div><div class="trend">${ebars}</div>`;
+  }
+  const list=$("#md-list");list.innerHTML="";
+  if(!V.moods.length){list.innerHTML=`<div class="center-empty">No check-ins yet. Your first one starts the trend.</div>`;return;}
+  V.moods.slice(0,30).forEach(m=>{
+    const d=document.createElement("div");d.className="journal-entry";
+    d.innerHTML=`<div class="meta"><span>${new Date(m.date).toLocaleDateString(undefined,{month:"short",day:"numeric"})} · ${new Date(m.date).toLocaleTimeString([],{hour:"numeric",minute:"2-digit"})}</span><button class="del-m" style="color:#c0b8a8;font-size:18px;line-height:1">×</button></div>
+      <div style="font-size:22px">${MFACE[m.mood]} ${m.energy?`<span style="font-size:13px;color:var(--ink2)">· energy ${m.energy}/5</span>`:""}</div>${m.note?`<div class="tx" style="margin-top:4px">${esc(m.note)}</div>`:""}`;
+    d.querySelector(".del-m").onclick=()=>{V.moods=V.moods.filter(x=>x!==m);save();renderMood();};
+    list.appendChild(d);
+  });
+}
+
+/* ───────── voice input ───────── */
+const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+let recog=null, recBtn=null;
+function dictate(target,btn){
+  if(!SR){toast("Voice input isn't supported in this browser.");return;}
+  if(recog){try{recog.stop();}catch(_){}return;}
+  recog=new SR();recog.lang=navigator.language||"en-US";recog.interimResults=true;recog.continuous=true;
+  const base=target.value?target.value.replace(/\s*$/,"")+" ":"";
+  recBtn=btn; btn.classList.add("rec");
+  recog.onresult=e=>{let txt="";for(let i=0;i<e.results.length;i++)txt+=e.results[i][0].transcript;target.value=base+txt;target.dispatchEvent(new Event("input"));};
+  recog.onerror=()=>{try{recog&&recog.stop();}catch(_){}};
+  recog.onend=()=>{if(recBtn)recBtn.classList.remove("rec");recog=null;};
+  try{recog.start();}catch(_){recog=null;btn.classList.remove("rec");}
+}
+function micIcon(){return '<svg viewBox="0 0 24 24" fill="none"><rect x="9" y="3" width="6" height="11" rx="3" stroke="currentColor" stroke-width="1.7"/><path d="M5 11a7 7 0 0014 0M12 18v3" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>';}
+function addDictateFoot(targetSel,footSel){
+  if(!SR)return;
+  const b=document.createElement("button");b.type="button";b.className="btn btn-ghost btn-sm";b.textContent="🎤 Dictate";
+  let on=false;
+  b.onclick=()=>{const t=$(targetSel);if(!t)return;if(on){try{recog&&recog.stop();}catch(_){}on=false;b.textContent="🎤 Dictate";}else{dictate(t,b);on=true;b.textContent="● Stop";}};
+  const foot=$(footSel);if(foot)foot.insertBefore(b,foot.firstChild);
+}
+// chat composer mic
+if(SR){
+  const mb=document.createElement("button");mb.className="mic";mb.title="Voice input";mb.style.marginRight="2px";mb.innerHTML=micIcon();
+  const send=$("#send-btn");send.parentNode.insertBefore(mb,send);
+  mb.onclick=()=>dictate($("#chat-input"),mb);
+}
+
+/* ───────── PWA ───────── */
+if("serviceWorker" in navigator && location.protocol.indexOf("http")===0){
+  window.addEventListener("load",()=>{navigator.serviceWorker.register("sw.js").catch(()=>{});});
 }
 
 /* ───────── settings ───────── */
@@ -929,7 +1251,7 @@ $("#make-link").onclick=()=>{
 
 /* ───────── modal + toast ───────── */
 function modal(html){$("#modal").innerHTML=html;$("#modal-bg").classList.add("show");}
-function closeModal(){$("#modal-bg").classList.remove("show");$("#modal").innerHTML="";if(breatheTimer){clearInterval(breatheTimer);breatheTimer=null;}}
+function closeModal(){$("#modal-bg").classList.remove("show");$("#modal").innerHTML="";if(breatheTimer){clearInterval(breatheTimer);breatheTimer=null;}if(sosTimer){clearInterval(sosTimer);sosTimer=null;}if(recog){try{recog.stop();}catch(_){}}}
 $("#modal-bg").onclick=e=>{if(e.target===$("#modal-bg"))closeModal();};
 document.addEventListener("keydown",e=>{if(e.key==="Escape"&&$("#modal-bg").classList.contains("show"))closeModal();});
 let toastT=null;
